@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% block title %}Technician Registration — {{ website_settings.website_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm">
+                <h3 class="fw-bold text-navy mb-1">Technician &amp; Service Partner Registration</h3>
+                <p class="small text-muted mb-4">Complete your profile and KYC documents. Administrator approval is required before receiving jobs.</p>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% if form.errors %}
+                    <div class="alert alert-danger small">{{ form.errors }}</div>
+                    {% endif %}
+                    <h6 class="fw-bold text-orange mt-2 mb-3">1. Personal &amp; Contact Information</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Full Legal Name *</label>{{ form.full_legal_name }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-semibold">Date of Birth</label>{{ form.date_of_birth }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-semibold">Gender</label>{{ form.gender }}</div>
+                        <div class="col-md-4"><label class="form-label small fw-semibold">Phone Number *</label>{{ form.phone }}</div>
+                        <div class="col-md-4"><label class="form-label small fw-semibold">WhatsApp Number</label>{{ form.whatsapp_number }}</div>
+                        <div class="col-md-4"><label class="form-label small fw-semibold">Email Address *</label>{{ form.email }}</div>
+                        <div class="col-md-8"><label class="form-label small fw-semibold">Residential Address *</label>{{ form.residential_address }}</div>
+                        <div class="col-md-4"><label class="form-label small fw-semibold">Profile Photograph</label>{{ form.profile_photo }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Emergency Contact Name *</label>{{ form.emergency_contact_name }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Emergency Contact Phone *</label>{{ form.emergency_contact_phone }}</div>
+                    </div>
+
+                    <h6 class="fw-bold text-orange mb-3">2. Skills, Categories &amp; Service Areas</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4"><label class="form-label small fw-semibold">Experience (Years) *</label>{{ form.experience_years }}</div>
+                        <div class="col-md-8"><label class="form-label small fw-semibold">Certificates &amp; Qualifications</label>{{ form.certificates_notes }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Skills &amp; Specializations *</label>{{ form.skills_summary }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Previous Work Experience</label>{{ form.previous_experience }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Service Categories *</label><div class="border rounded p-2 bg-light small">{{ form.service_categories }}</div></div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="form-label small fw-semibold mb-0">Service Locations</label>
+                                <span class="badge bg-navy" id="selectedAreasCount">0 selected</span>
+                            </div>
+                            <div class="border rounded p-2 bg-light small">
+                                <input type="text" id="areaSearchInput" class="form-control form-control-sm mb-2" placeholder="Search area or city (e.g. Baneshwor, Lalitpur)...">
+                                <div class="d-flex flex-wrap gap-1 mb-2">
+                                    <button type="button" class="btn btn-xs btn-navy area-city-btn active" data-city="all" style="font-size:0.75rem;padding:2px 8px;">All</button>
+                                    <button type="button" class="btn btn-xs btn-outline-secondary area-city-btn" data-city="Kathmandu" style="font-size:0.75rem;padding:2px 8px;">Kathmandu</button>
+                                    <button type="button" class="btn btn-xs btn-outline-secondary area-city-btn" data-city="Lalitpur" style="font-size:0.75rem;padding:2px 8px;">Lalitpur</button>
+                                    <button type="button" class="btn btn-xs btn-outline-secondary area-city-btn" data-city="Bhaktapur" style="font-size:0.75rem;padding:2px 8px;">Bhaktapur</button>
+                                    <button type="button" class="btn btn-xs btn-outline-primary ms-auto" id="selectVisibleAreas" style="font-size:0.75rem;padding:2px 8px;">Select Visible</button>
+                                    <button type="button" class="btn btn-xs btn-outline-danger" id="clearAllAreas" style="font-size:0.75rem;padding:2px 8px;">Clear</button>
+                                </div>
+                                <div id="serviceAreasList" style="max-height:210px;overflow-y:auto;">
+                                    {{ form.service_areas }}
+                                </div>
+                                <div id="noAreasMsg" class="text-muted text-center py-2 d-none">No matching locations found.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold text-orange mb-3">3. Payout Details &amp; KYC Verification</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3"><label class="form-label small fw-semibold">Bank Name</label>{{ form.bank_name }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-semibold">Account Name</label>{{ form.bank_account_name }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-semibold">Account Number</label>{{ form.bank_account_number }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-semibold">Wallet ID (eSewa/Khalti)</label>{{ form.payout_wallet_id }}</div>
+                        <div class="col-md-4"><label class="form-label small fw-semibold">Gov ID Type *</label>{{ form.document_type }}</div>
+                        <div class="col-md-4"><label class="form-label small fw-semibold">Gov ID Number *</label>{{ form.document_number }}</div>
+                        <div class="col-md-4"><label class="form-label small fw-semibold">Certificate File</label>{{ form.certificate_file }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">ID Front Photo *</label>{{ form.front_image }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">ID Back Photo</label>{{ form.back_image }}</div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Password *</label>{{ form.password }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Confirm Password *</label>{{ form.confirm_password }}</div>
+                    </div>
+                    <button type="submit" class="btn btn-navy w-100 py-3">Submit Technician Application</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('areaSearchInput');
+    const listContainer = document.getElementById('serviceAreasList');
+    const countBadge = document.getElementById('selectedAreasCount');
+    const noMsg = document.getElementById('noAreasMsg');
+    const cityBtns = document.querySelectorAll('.area-city-btn');
+    let activeCity = 'all';
+
+    // Django CheckboxSelectMultiple renders either div > div or ul > li
+    const items = Array.from(listContainer.querySelectorAll('div > div, ul > li'));
+
+    function updateCount() {
+        const checked = listContainer.querySelectorAll('input[type="checkbox"]:checked').length;
+        countBadge.textContent = `${checked} selected`;
+    }
+
+    function filterAreas() {
+        const q = searchInput.value.trim().toLowerCase();
+        let visibleCount = 0;
+        items.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            const matchesSearch = !q || text.includes(q);
+            const matchesCity = activeCity === 'all' || text.includes(activeCity.toLowerCase());
+            if (matchesSearch && matchesCity) {
+                item.style.display = '';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        noMsg.classList.toggle('d-none', visibleCount > 0);
+    }
+
+    searchInput.addEventListener('input', filterAreas);
+    listContainer.addEventListener('change', updateCount);
+
+    cityBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            cityBtns.forEach(b => {
+                b.classList.remove('btn-navy', 'active');
+                b.classList.add('btn-outline-secondary');
+            });
+            btn.classList.remove('btn-outline-secondary');
+            btn.classList.add('btn-navy', 'active');
+            activeCity = btn.dataset.city;
+            filterAreas();
+        });
+    });
+
+    document.getElementById('selectVisibleAreas').addEventListener('click', () => {
+        items.forEach(item => {
+            if (item.style.display !== 'none') {
+                const cb = item.querySelector('input[type="checkbox"]');
+                if (cb) cb.checked = true;
+            }
+        });
+        updateCount();
+    });
+
+    document.getElementById('clearAllAreas').addEventListener('click', () => {
+        listContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        updateCount();
+    });
+
+    updateCount();
+});
+</script>
+{% endblock %}

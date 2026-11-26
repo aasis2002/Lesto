@@ -1,0 +1,98 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block page_title %}Analytics &amp; Business Overview{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <h4 class="fw-bold text-navy mb-0">Dashboard Overview</h4>
+    <form method="get" class="d-flex flex-wrap gap-2 align-items-center">
+        <input type="date" name="start_date" value="{{ start_date }}" class="form-control form-control-sm" style="width:auto;">
+        <input type="date" name="end_date" value="{{ end_date }}" class="form-control form-control-sm" style="width:auto;">
+        <button type="submit" class="btn btn-navy btn-sm">Filter</button>
+        <a href="{% url 'dashboard:overview' %}" class="btn btn-outline-secondary btn-sm">Reset</a>
+    </form>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-xl-2"><div class="stat-card p-3"><div class="small text-muted">Total Revenue</div><div class="h5 fw-bold text-navy mb-0">{{ business_settings.currency_symbol }}{{ kpis.total_revenue }}</div></div></div>
+    <div class="col-6 col-md-4 col-xl-2"><div class="stat-card p-3"><div class="small text-muted">Total Expenses</div><div class="h5 fw-bold text-danger mb-0">{{ business_settings.currency_symbol }}{{ kpis.total_expenses }}</div></div></div>
+    <div class="col-6 col-md-4 col-xl-2"><div class="stat-card p-3"><div class="small text-muted">Net Profit</div><div class="h5 fw-bold text-success mb-0">{{ business_settings.currency_symbol }}{{ kpis.net_profit }}</div></div></div>
+    <div class="col-6 col-md-4 col-xl-2"><div class="stat-card p-3"><div class="small text-muted">Total Bookings</div><div class="h5 fw-bold text-navy mb-0">{{ kpis.total_bookings }}</div></div></div>
+    <div class="col-6 col-md-4 col-xl-2"><div class="stat-card p-3"><div class="small text-muted">Pending Enquiries</div><div class="h5 fw-bold text-info mb-0">{{ kpis.pending_bookings }}</div></div></div>
+    <div class="col-6 col-md-4 col-xl-2"><div class="stat-card p-3"><div class="small text-muted">Active Jobs</div><div class="h5 fw-bold text-warning mb-0">{{ kpis.active_jobs }}</div></div></div>
+
+    <div class="col-6 col-md-4 col-xl-2"><div class="stat-card p-3"><div class="small text-muted">Completed Jobs</div><div class="h5 fw-bold text-success mb-0">{{ kpis.completed_jobs }}</div></div></div>
+    <div class="col-6 col-md-4 col-xl-2"><div class="stat-card p-3"><div class="small text-muted">Cancelled Jobs</div><div class="h5 fw-bold text-danger mb-0">{{ kpis.cancelled_jobs }}</div></div></div>
+    <div class="col-6 col-md-4 col-xl-2"><div class="stat-card p-3"><div class="small text-muted">Customers</div><div class="h5 fw-bold text-navy mb-0">{{ kpis.total_customers }}</div></div></div>
+    <div class="col-6 col-md-4 col-xl-2"><div class="stat-card p-3"><div class="small text-muted">Technicians</div><div class="h5 fw-bold text-navy mb-0">{{ kpis.total_technicians }}</div></div></div>
+    <div class="col-6 col-md-4 col-xl-2"><div class="stat-card p-3"><div class="small text-muted">Pending KYC (Tech/Cust)</div><div class="h5 fw-bold text-orange mb-0">{{ kpis.pending_tech_approvals }} / {{ kpis.pending_customer_verifications }}</div></div></div>
+    <div class="col-6 col-md-4 col-xl-2"><div class="stat-card p-3"><div class="small text-muted">Pending Payouts</div><div class="h5 fw-bold text-orange mb-0">{{ business_settings.currency_symbol }}{{ kpis.outstanding_payouts }}</div></div></div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-6"><div class="bg-white p-3 rounded-4 border shadow-sm"><h6 class="fw-bold text-navy">Daily Revenue Trend</h6><canvas id="dailyRevChart" height="140"></canvas></div></div>
+    <div class="col-lg-6"><div class="bg-white p-3 rounded-4 border shadow-sm"><h6 class="fw-bold text-navy">Monthly Revenue &amp; Financial Mix</h6><canvas id="monthlyRevChart" height="140"></canvas></div></div>
+    <div class="col-lg-4"><div class="bg-white p-3 rounded-4 border shadow-sm"><h6 class="fw-bold text-navy">Category Performance</h6><canvas id="catChart" height="180"></canvas></div></div>
+    <div class="col-lg-4"><div class="bg-white p-3 rounded-4 border shadow-sm"><h6 class="fw-bold text-navy">Booking Status Distribution</h6><canvas id="statusChart" height="180"></canvas></div></div>
+    <div class="col-lg-4"><div class="bg-white p-3 rounded-4 border shadow-sm"><h6 class="fw-bold text-navy">Payment Methods</h6><canvas id="pmChart" height="180"></canvas></div></div>
+    <div class="col-lg-6"><div class="bg-white p-3 rounded-4 border shadow-sm"><h6 class="fw-bold text-navy">Most Popular Services</h6><canvas id="popChart" height="150"></canvas></div></div>
+    <div class="col-lg-6"><div class="bg-white p-3 rounded-4 border shadow-sm"><h6 class="fw-bold text-navy">Geographic Service Demand &amp; Top Technicians</h6><canvas id="geoChart" height="150"></canvas></div></div>
+</div>
+
+<div class="bg-white p-4 rounded-4 border shadow-sm">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="fw-bold text-navy mb-0">Recent Bookings</h6>
+        <a href="{% url 'dashboard:bookings_manage' %}" class="btn btn-sm btn-outline-primary">View All</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover small align-middle">
+            <thead class="table-light"><tr><th>Enquiry ID</th><th>Customer</th><th>Service</th><th>Technician</th><th>Status</th><th>Price</th><th></th></tr></thead>
+            <tbody>
+                {% for b in recent_bookings %}
+                <tr>
+                    <td class="fw-bold">{{ b.enquiry_id }}</td>
+                    <td>{{ b.customer_name }}<br><span class="text-muted">{{ b.customer_phone }}</span></td>
+                    <td>{{ b.service_name_snapshot }}</td>
+                    <td>{{ b.assigned_technician.full_name|default:"Unassigned" }}</td>
+                    <td><span class="badge bg-{{ b.status_badge_color }}">{{ b.get_status_display }}</span></td>
+                    <td>{{ business_settings.currency_symbol }}{{ b.final_price }}</td>
+                    <td><a href="{% url 'dashboard:booking_detail_admin' b.enquiry_id %}" class="btn btn-sm btn-outline-secondary">Open</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+const data = {{ chart_json|safe }};
+new Chart(document.getElementById('dailyRevChart'), {
+    type: 'line',
+    data: { labels: data.daily_labels, datasets: [{ label: 'Revenue', data: data.daily_values, borderColor: '#0B2C52', backgroundColor: 'rgba(11,44,82,0.1)', fill: true, tension: 0.3 }] }
+});
+new Chart(document.getElementById('monthlyRevChart'), {
+    type: 'bar',
+    data: { labels: data.monthly_labels, datasets: [{ label: 'Monthly Revenue', data: data.monthly_values, backgroundColor: '#F97316' }] }
+});
+new Chart(document.getElementById('catChart'), {
+    type: 'bar',
+    data: { labels: data.cat_labels, datasets: [{ label: 'Bookings', data: data.cat_counts, backgroundColor: '#0B2C52' }] }
+});
+new Chart(document.getElementById('statusChart'), {
+    type: 'doughnut',
+    data: { labels: ['Completed', 'Active', 'Pending', 'Cancelled'], datasets: [{ data: data.completion_vs_cancel, backgroundColor: ['#16A34A', '#F97316', '#0EA5E9', '#DC2626'] }] }
+});
+new Chart(document.getElementById('pmChart'), {
+    type: 'pie',
+    data: { labels: data.pm_labels, datasets: [{ data: data.pm_values, backgroundColor: ['#0B2C52', '#F97316', '#16A34A', '#8B5CF6', '#0EA5E9'] }] }
+});
+new Chart(document.getElementById('popChart'), {
+    type: 'bar',
+    data: { labels: data.pop_labels, datasets: [{ label: 'Bookings', data: data.pop_counts, backgroundColor: '#F97316' }] },
+    options: { indexAxis: 'y' }
+});
+new Chart(document.getElementById('geoChart'), {
+    type: 'bar',
+    data: { labels: data.geo_labels, datasets: [{ label: 'Demand by City', data: data.geo_counts, backgroundColor: '#0EA5E9' }] }
+});
+</script>
+{% endblock %}

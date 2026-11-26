@@ -1,0 +1,49 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block page_title %}Kanban Job Tracking Board{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="fw-bold text-navy mb-0">Live Job Tracking Board</h5>
+    <span class="small text-muted">Move jobs across columns or click any card to manage</span>
+</div>
+<div class="kanban-board">
+    {% for col in board_data %}
+    <div class="kanban-column">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <strong class="small text-navy">{{ col.title }}</strong>
+            <span class="badge bg-{{ col.color }}">{{ col.items|length }}</span>
+        </div>
+        {% for b in col.items %}
+        <div class="kanban-card">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <a href="{% url 'dashboard:booking_detail_admin' b.enquiry_id %}" class="fw-bold small text-decoration-none text-navy">{{ b.enquiry_id }}</a>
+                <span class="small text-muted">{{ b.preferred_date|date:"M d" }}</span>
+            </div>
+            <div class="small fw-semibold">{{ b.service_name_snapshot }}</div>
+            <div class="small text-muted mb-2">{{ b.customer_name }} • {{ b.assigned_technician.full_name|default:"Unassigned" }}</div>
+            <select class="form-select form-select-sm kanban-move-select" data-enquiry="{{ b.enquiry_id }}">
+                {% for k, v in status_choices %}
+                <option value="{{ k }}" {% if b.status == k %}selected{% endif %}>{{ v }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% empty %}
+        <div class="small text-muted text-center py-3">Empty</div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.querySelectorAll('.kanban-move-select').forEach(sel => {
+    sel.addEventListener('change', async (e) => {
+        const fd = new FormData();
+        fd.append('enquiry_id', e.target.dataset.enquiry);
+        fd.append('new_status', e.target.value);
+        fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        const res = await fetch('{% url "dashboard:kanban_move_status" %}', { method: 'POST', body: fd });
+        if (res.ok) location.reload();
+    });
+});
+</script>
+{% endblock %}

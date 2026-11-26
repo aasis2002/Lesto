@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Login — {{ website_settings.website_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm">
+                <h3 class="fw-bold text-navy mb-1">Welcome Back</h3>
+                <p class="small text-muted mb-4">Sign in to your LetsTo Customer, Technician, or Admin account.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Phone, Username, or Email</label>
+                        {{ form.identifier }}
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-semibold">Password</label>
+                        {{ form.password }}
+                    </div>
+                    <button type="submit" class="btn btn-navy w-100 py-2">Sign In</button>
+                </form>
+                <hr class="my-4">
+                <div class="d-flex justify-content-between small">
+                    <a href="{% url 'core:register_customer' %}">New Customer? Sign Up</a>
+                    <a href="{% url 'core:register_technician' %}" class="text-orange fw-semibold">Join as Technician</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

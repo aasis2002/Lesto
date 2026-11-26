@@ -1,0 +1,39 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block page_title %}Booking Management{% endblock %}
+{% block content %}
+<div class="bg-white p-3 rounded-4 border shadow-sm mb-4">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-3"><label class="form-label small">Search</label><input type="text" name="q" value="{{ filters.q }}" class="form-control form-control-sm" placeholder="ID, Name, Phone..."></div>
+        <div class="col-md-2"><label class="form-label small">Status</label><select name="status" class="form-select form-select-sm"><option value="">All</option>{% for k,v in status_choices %}<option value="{{ k }}" {% if filters.status == k %}selected{% endif %}>{{ v }}</option>{% endfor %}</select></div>
+        <div class="col-md-2"><label class="form-label small">Category</label><select name="category" class="form-select form-select-sm"><option value="">All</option>{% for c in categories %}<option value="{{ c.id }}" {% if filters.category == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>{% endfor %}</select></div>
+        <div class="col-md-2"><label class="form-label small">From</label><input type="date" name="date_from" value="{{ filters.date_from }}" class="form-control form-control-sm"></div>
+        <div class="col-md-2"><label class="form-label small">To</label><input type="date" name="date_to" value="{{ filters.date_to }}" class="form-control form-control-sm"></div>
+        <div class="col-md-1 d-grid"><button type="submit" class="btn btn-navy btn-sm">Go</button></div>
+    </form>
+</div>
+
+<div class="bg-white p-4 rounded-4 border shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover small align-middle">
+            <thead class="table-light"><tr><th>Enquiry ID</th><th>Customer</th><th>Service</th><th>Schedule</th><th>Technician</th><th>Status</th><th>Payment</th><th>Final Price</th><th></th></tr></thead>
+            <tbody>
+                {% for b in bookings %}
+                <tr>
+                    <td class="fw-bold">{{ b.enquiry_id }}</td>
+                    <td>{{ b.customer_name }}<br><span class="text-muted">{{ b.customer_phone }}</span></td>
+                    <td>{{ b.service_name_snapshot }}</td>
+                    <td>{{ b.preferred_date }}<br><span class="text-muted">{{ b.preferred_time }}</span></td>
+                    <td>{{ b.assigned_technician.full_name|default:"Unassigned" }}</td>
+                    <td><span class="badge bg-{{ b.status_badge_color }}">{{ b.get_status_display }}</span></td>
+                    <td><span class="badge bg-light text-dark border">{{ b.get_payment_status_display }}</span></td>
+                    <td class="fw-bold">{{ business_settings.currency_symbol }}{{ b.final_price }}</td>
+                    <td><a href="{% url 'dashboard:booking_detail_admin' b.enquiry_id %}" class="btn btn-sm btn-orange">Manage</a></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="9" class="text-center text-muted py-4">No bookings found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Job {{ booking.enquiry_id }} — Technician Portal{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <a href="{% url 'bookings:technician_dashboard' %}" class="small text-decoration-none">&larr; Back to Jobs</a>
+    <div class="row g-4 mt-1">
+        <div class="col-lg-8">
+            <div class="bg-white p-4 rounded-4 border shadow-sm mb-4">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+                    <div>
+                        <span class="badge bg-navy">{{ booking.enquiry_id }}</span>
+                        <h3 class="fw-bold text-navy mt-1 mb-0">{{ booking.service_name_snapshot }}</h3>
+                    </div>
+                    <span class="badge bg-{{ booking.status_badge_color }} fs-6">{{ booking.get_status_display }}</span>
+                </div>
+
+                <div class="row g-3 bg-light p-3 rounded-3 small mb-4">
+                    <div class="col-md-6"><strong>Customer:</strong> {{ booking.customer_name }} ({{ booking.customer_phone }})</div>
+                    <div class="col-md-6"><strong>Schedule:</strong> {{ booking.preferred_date }} • {{ booking.preferred_time }}</div>
+                    <div class="col-12"><strong>Location:</strong> {{ booking.address }}</div>
+                    <div class="col-12"><strong>Problem Description:</strong> {{ booking.description }}</div>
+                </div>
+
+                {% if assignment and assignment.acceptance_status == 'pending' %}
+                <div class="alert alert-info d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <span class="small fw-semibold">Please accept or reject this job assignment:</span>
+                    <div class="d-flex gap-2">
+                        <form action="{% url 'bookings:technician_respond_job' booking.enquiry_id %}" method="post">
+                            {% csrf_token %}<input type="hidden" name="decision" value="accept">
+                            <button type="submit" class="btn btn-success btn-sm">Accept Job</button>
+                        </form>
+                        <form action="{% url 'bookings:technician_respond_job' booking.enquiry_id %}" method="post" class="d-flex gap-1">
+                            {% csrf_token %}<input type="hidden" name="decision" value="reject">
+                            <input type="text" name="reason" class="form-control form-control-sm" placeholder="Reason" required>
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    {% if booking.status == 'technician_assigned' %}
+                    <form action="{% url 'bookings:technician_update_status' booking.enquiry_id %}" method="post">{% csrf_token %}<input type="hidden" name="status" value="on_the_way"><button class="btn btn-warning btn-sm">Mark On The Way</button></form>
+                    {% elif booking.status == 'on_the_way' %}
+                    <form action="{% url 'bookings:technician_update_status' booking.enquiry_id %}" method="post">{% csrf_token %}<input type="hidden" name="status" value="work_started"><button class="btn btn-orange btn-sm">Start Work</button></form>
+                    {% elif booking.status == 'work_started' %}
+                    <form action="{% url 'bookings:technician_update_status' booking.enquiry_id %}" method="post">{% csrf_token %}<input type="hidden" name="status" value="work_completed"><button class="btn btn-success btn-sm">Mark Work Completed</button></form>
+                    {% endif %}
+                    <a href="{{ customer_wa_url }}" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">Message Customer on WhatsApp</a>
+                </div>
+
+                <h6 class="fw-bold text-navy mb-2">Job Notes &amp; Completion Reports</h6>
+                {% for u in booking.job_updates.all %}
+                <div class="p-2 border rounded mb-2 small">
+                    <strong>{{ u.author.full_name }}</strong> <span class="text-muted">({{ u.created_at|date:"M d, H:i" }})</span>
+                    {% if u.is_completion_report %}<span class="badge bg-success ms-1">Completion Report</span>{% endif %}
+                    {% if u.requested_material_amount > 0 %}<span class="badge bg-warning text-dark ms-1">Material Req: {{ business_settings.currency_symbol }}{{ u.requested_material_amount }}</span>{% endif %}
+                    <div class="mt-1">{{ u.note }}</div>
+                </div>
+                {% empty %}
+                <p class="small text-muted">No job notes yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="bg-white p-4 rounded-4 border shadow-sm mb-3">
+                <h6 class="fw-bold text-navy mb-2">Add Note / Material Request</h6>
+                <form action="{% url 'bookings:technician_add_note' booking.enquiry_id %}" method="post">
+                    {% csrf_token %}
+                    <div class="mb-2">{{ note_form.note }}</div>
+                    <div class="mb-2"><label class="form-label small">Extra Material Amount (if any)</label>{{ note_form.requested_material_amount }}</div>
+                    <div class="form-check mb-3">{{ note_form.is_completion_report }} <label class="form-check-label small">Mark as Completion Report</label></div>
+                    <button type="submit" class="btn btn-navy btn-sm w-100">Save Note</button>
+                </form>
+            </div>
+            <div class="bg-white p-4 rounded-4 border shadow-sm">
+                <h6 class="fw-bold text-navy mb-2">Upload Before / After Photo</h6>
+                <form action="{% url 'bookings:technician_upload_photo' booking.enquiry_id %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <select name="stage" class="form-select form-select-sm mb-2">
+                        <option value="before_work">Before Work</option>
+                        <option value="after_work">After Work</option>
+                    </select>
+                    <input type="file" name="file" class="form-control form-control-sm mb-2" required>
+                    <input type="text" name="caption" class="form-control form-control-sm mb-2" placeholder="Caption (optional)">
+                    <button type="submit" class="btn btn-orange btn-sm w-100">Upload Photo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}KYC Verification — {{ website_settings.website_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm">
+                <h3 class="fw-bold text-navy mb-2">Identity Verification (KYC)</h3>
+                {% if user.verification_record %}
+                <div class="alert alert-info small">
+                    Current Status: <strong>{{ user.verification_record.get_status_display }}</strong>
+                    {% if user.verification_record.rejection_reason %}
+                    <br>Reason: {{ user.verification_record.rejection_reason }}
+                    {% endif %}
+                </div>
+                {% endif %}
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3"><label class="form-label small fw-semibold">Document Type</label>{{ form.document_type }}</div>
+                    <div class="mb-3"><label class="form-label small fw-semibold">Document Number</label>{{ form.document_number }}</div>
+                    <div class="mb-3"><label class="form-label small fw-semibold">ID Front Image *</label>{{ form.front_image }}</div>
+                    <div class="mb-3"><label class="form-label small fw-semibold">ID Back Image</label>{{ form.back_image }}</div>
+                    <div class="mb-3"><label class="form-label small fw-semibold">Address Proof</label>{{ form.address_proof }}</div>
+                    <div class="mb-4"><label class="form-label small fw-semibold">Trade Certificate (Technicians)</label>{{ form.certificate_file }}</div>
+                    <button type="submit" class="btn btn-orange w-100 py-2">Submit Securely</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Track Booking — {{ website_settings.website_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="bg-white p-4 rounded-4 border shadow-sm mb-4">
+                <h3 class="fw-bold text-navy mb-3">Track Your Service Booking</h3>
+                <form method="get" class="row g-2">
+                    <div class="col-md-5">
+                        <input type="text" name="enquiry_id" value="{{ enquiry_id }}" class="form-control" placeholder="Enquiry ID (e.g. LT-261126-A1B2C)" required>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" name="phone" value="{{ phone }}" class="form-control" placeholder="Mobile number">
+                    </div>
+                    <div class="col-md-3 d-grid">
+                        <button type="submit" class="btn btn-orange">Track Now</button>
+                    </div>
+                </form>
+                {% if error %}
+                <div class="alert alert-warning mt-3 mb-0 small">{{ error }}</div>
+                {% endif %}
+            </div>
+
+            {% if booking %}
+            <div class="bg-white p-4 rounded-4 border shadow-sm">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-4">
+                    <div>
+                        <span class="badge bg-navy mb-1">{{ booking.enquiry_id }}</span>
+                        <h4 class="fw-bold mb-0">{{ booking.service_name_snapshot }}</h4>
+                        <span class="small text-muted">{{ booking.preferred_date }} • {{ booking.preferred_time }}</span>
+                    </div>
+                    <span class="badge bg-{{ booking.status_badge_color }} fs-6">{{ booking.get_status_display }}</span>
+                </div>
+
+                <h6 class="fw-bold text-navy mb-3">Job Status Timeline</h6>
+                <div class="ms-2">
+                    {% for key, label in timeline_steps %}
+                    <div class="timeline-step {% if booking.status == key %}current{% elif booking.status != 'cancelled' %}completed{% endif %}">
+                        <div class="fw-semibold small">{{ label }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% if booking.assigned_technician %}
+                <div class="mt-4 p-3 bg-light rounded-3 small">
+                    <strong>Assigned Technician:</strong> {{ booking.assigned_technician.full_name }} ({{ booking.assigned_technician.phone }})
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

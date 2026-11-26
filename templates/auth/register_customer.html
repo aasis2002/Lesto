@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Customer Registration — {{ website_settings.website_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm">
+                <h3 class="fw-bold text-navy mb-1">Create Customer Account</h3>
+                <p class="small text-muted mb-4">Book trusted home services, save addresses, and track every job.</p>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% if form.errors %}
+                    <div class="alert alert-danger small">{{ form.errors }}</div>
+                    {% endif %}
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Full Name *</label>{{ form.full_name }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Mobile Number *</label>{{ form.phone }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">WhatsApp Number</label>{{ form.whatsapp_number }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Email Address (Optional)</label>{{ form.email }}</div>
+                        <div class="col-12"><label class="form-label small fw-semibold">Residential Address *</label>{{ form.residential_address }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-semibold">City *</label>{{ form.city }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-semibold">District *</label>{{ form.district }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-semibold">State / Province</label>{{ form.state }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-semibold">Postal Code</label>{{ form.postal_code }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Profile Photo</label>{{ form.profile_photo }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">ID Document Type (Optional)</label>{{ form.document_type }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">ID Number</label>{{ form.document_number }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">ID Document Upload</label>{{ form.front_image }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Password *</label>{{ form.password }}</div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Confirm Password *</label>{{ form.confirm_password }}</div>
+                    </div>
+                    <button type="submit" class="btn btn-orange w-100 py-2 mt-4">Register Customer Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

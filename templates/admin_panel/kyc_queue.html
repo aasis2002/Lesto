@@ -1,0 +1,46 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block page_title %}KYC &amp; Identity Verification{% endblock %}
+{% block content %}
+<div class="bg-white p-4 rounded-4 border shadow-sm">
+    <h5 class="fw-bold text-navy mb-3">Verification Queue</h5>
+    <div class="table-responsive">
+        <table class="table table-hover small align-middle">
+            <thead class="table-light"><tr><th>User</th><th>Role</th><th>Status</th><th>Secure Documents</th><th>Review Action</th></tr></thead>
+            <tbody>
+                {% for v in verifications %}
+                <tr>
+                    <td class="fw-bold">{{ v.user.full_name }}<br><span class="text-muted fw-normal">{{ v.user.phone }}</span></td>
+                    <td><span class="badge bg-light text-dark border">{{ v.user.get_role_display }}</span></td>
+                    <td><span class="badge {% if v.status == 'approved' %}bg-success{% elif v.status == 'rejected' or v.status == 'suspended' %}bg-danger{% else %}bg-warning text-dark{% endif %}">{{ v.get_status_display }}</span></td>
+                    <td>
+                        {% if v.active_doc %}
+                        <div class="small">ID: {{ v.active_doc.get_document_type_display }} ({{ v.active_doc.document_number }})</div>
+                        <div class="d-flex gap-1 mt-1">
+                            <a href="{% url 'core:serve_kyc_document' v.active_doc.id 'front_image' %}" target="_blank" class="btn btn-sm btn-outline-primary">Front</a>
+                            {% if v.active_doc.back_image %}<a href="{% url 'core:serve_kyc_document' v.active_doc.id 'back_image' %}" target="_blank" class="btn btn-sm btn-outline-primary">Back</a>{% endif %}
+                            {% if v.active_doc.certificate_file %}<a href="{% url 'core:serve_kyc_document' v.active_doc.id 'certificate_file' %}" target="_blank" class="btn btn-sm btn-outline-secondary">Cert</a>{% endif %}
+                        </div>
+                        {% else %}
+                        <span class="text-muted">Not uploaded</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="post" class="d-flex flex-wrap gap-1">
+                            {% csrf_token %}<input type="hidden" name="user_id" value="{{ v.user.id }}">
+                            <select name="decision" class="form-select form-select-sm" style="width:auto;">
+                                <option value="approved">Approve</option>
+                                <option value="under_verification">Under Verification</option>
+                                <option value="rejected">Reject</option>
+                                <option value="suspended">Suspend</option>
+                            </select>
+                            <input type="text" name="rejection_reason" class="form-control form-control-sm" style="width:150px;" placeholder="Reason / Notes">
+                            <button type="submit" class="btn btn-navy btn-sm">Apply</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

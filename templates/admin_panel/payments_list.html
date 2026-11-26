@@ -1,0 +1,48 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block page_title %}Payments &amp; Refunds{% endblock %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="bg-white p-4 rounded-4 border shadow-sm">
+            <h6 class="fw-bold text-navy mb-3">Record Payment</h6>
+            <form method="post">
+                {% csrf_token %}<input type="hidden" name="action" value="record_payment">
+                <div class="mb-2">
+                    <label class="form-label small">Booking *</label>
+                    <select name="enquiry_id" class="form-select form-select-sm" required>
+                        {% for b in unpaid_bookings %}
+                        <option value="{{ b.enquiry_id }}">{{ b.enquiry_id }} — {{ b.customer_name }} ({{ business_settings.currency_symbol }}{{ b.final_price }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-2"><label class="form-label small">Amount *</label><input type="number" step="0.01" name="amount" class="form-control form-control-sm" required></div>
+                <div class="mb-2"><label class="form-label small">Method</label><select name="method" class="form-select form-select-sm"><option value="cash">Cash</option><option value="esewa">eSewa</option><option value="khalti">Khalti</option><option value="bank_transfer">Bank Transfer</option><option value="digital_wallet">Digital Wallet</option></select></div>
+                <div class="mb-3"><label class="form-label small">Transaction Code</label><input type="text" name="transaction_code" class="form-control form-control-sm"></div>
+                <button type="submit" class="btn btn-success btn-sm w-100">Record Payment</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="bg-white p-4 rounded-4 border shadow-sm">
+            <h5 class="fw-bold text-navy mb-3">Recorded Payments</h5>
+            <div class="table-responsive">
+                <table class="table table-hover small align-middle">
+                    <thead class="table-light"><tr><th>Ref</th><th>Booking</th><th>Amount</th><th>Method</th><th>Verified By</th><th>Date</th></tr></thead>
+                    <tbody>
+                        {% for p in payments %}
+                        <tr>
+                            <td class="fw-bold">{{ p.reference_id }}</td>
+                            <td>{{ p.booking.enquiry_id }}</td>
+                            <td class="fw-bold text-success">{{ business_settings.currency_symbol }}{{ p.amount }}</td>
+                            <td>{{ p.get_method_display }}</td>
+                            <td>{{ p.verified_by.full_name|default:"-" }}</td>
+                            <td>{{ p.paid_at|date:"M d, Y H:i" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

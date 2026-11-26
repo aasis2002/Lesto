@@ -1,0 +1,24 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block page_title %}Reports &amp; Exports{% endblock %}
+{% block content %}
+<div class="bg-white p-4 rounded-4 border shadow-sm mb-4">
+    <h5 class="fw-bold text-navy mb-3">Generate &amp; Export Business Reports</h5>
+    <form method="get" class="row g-3 align-items-end">
+        <div class="col-md-3"><label class="form-label small">Start Date</label><input type="date" name="start_date" value="{{ start_date }}" class="form-control form-control-sm"></div>
+        <div class="col-md-3"><label class="form-label small">End Date</label><input type="date" name="end_date" value="{{ end_date }}" class="form-control form-control-sm"></div>
+        <div class="col-md-6 d-flex flex-wrap gap-2">
+            <button type="submit" class="btn btn-navy btn-sm">Apply Date Filter</button>
+            <a href="?format=pdf&start_date={{ start_date }}&end_date={{ end_date }}" class="btn btn-danger btn-sm">Export PDF</a>
+            <a href="?format=excel&start_date={{ start_date }}&end_date={{ end_date }}" class="btn btn-success btn-sm">Export Excel (.xlsx)</a>
+            <a href="?format=csv&start_date={{ start_date }}&end_date={{ end_date }}" class="btn btn-outline-primary btn-sm">Export CSV</a>
+        </div>
+    </form>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-3"><div class="stat-card p-3"><div class="small text-muted">Filtered Bookings</div><div class="h4 fw-bold text-navy mb-0">{{ bookings_count }}</div></div></div>
+    <div class="col-md-3"><div class="stat-card p-3"><div class="small text-muted">Net Revenue</div><div class="h4 fw-bold text-primary mb-0">{{ business_settings.currency_symbol }}{{ summary.net_revenue }}</div></div></div>
+    <div class="col-md-3"><div class="stat-card p-3"><div class="small text-muted">Expenses</div><div class="h4 fw-bold text-danger mb-0">{{ business_settings.currency_symbol }}{{ summary.total_expenses }}</div></div></div>
+    <div class="col-md-3"><div class="stat-card p-3"><div class="small text-muted">Net Profit</div><div class="h4 fw-bold text-success mb-0">{{ business_settings.currency_symbol }}{{ summary.net_profit }}</div></div></div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Notifications — {{ website_settings.website_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-navy mb-0">Notifications</h3>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-secondary btn-sm">Mark All as Read</button>
+        </form>
+    </div>
+    <div class="bg-white rounded-4 border shadow-sm divide-y">
+        {% for n in notifications %}
+        <div class="p-3 border-bottom {% if not n.is_read %}bg-light{% endif %}">
+            <div class="d-flex justify-content-between">
+                <strong class="text-navy small">{{ n.title }}</strong>
+                <span class="small text-muted">{{ n.created_at|timesince }} ago</span>
+            </div>
+            <p class="small text-muted mb-1">{{ n.message }}</p>
+            {% if n.link %}<a href="{{ n.link }}" class="small text-orange fw-semibold">View Details &rarr;</a>{% endif %}
+        </div>
+        {% empty %}
+        <div class="p-4 text-center text-muted small">No notifications yet.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

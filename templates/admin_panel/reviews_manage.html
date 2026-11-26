@@ -1,0 +1,21 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block page_title %}Reviews &amp; Feedback Moderation{% endblock %}
+{% block content %}
+<div class="bg-white p-4 rounded-4 border shadow-sm">
+    <h5 class="fw-bold text-navy mb-3">Customer Reviews</h5>
+    {% for r in reviews %}
+    <div class="p-3 border rounded-3 mb-3 small">
+        <div class="d-flex justify-content-between">
+            <strong>{{ r.customer.full_name }} &rarr; {{ r.service.name }} ({{ r.booking.enquiry_id }})</strong>
+            <span class="text-orange fw-bold">Service: ★{{ r.service_rating }} | Tech: ★{{ r.technician_rating }}</span>
+        </div>
+        <p class="my-2">{{ r.comment }}</p>
+        <div class="d-flex flex-wrap gap-2">
+            <form method="post">{% csrf_token %}<input type="hidden" name="action" value="toggle_visibility"><input type="hidden" name="review_id" value="{{ r.id }}"><button class="btn btn-sm {% if r.is_visible %}btn-outline-secondary{% else %}btn-success{% endif %}">{% if r.is_visible %}Hide Review{% else %}Show Review{% endif %}</button></form>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted small">No reviews submitted yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

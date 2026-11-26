@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block title %}{{ service.name }} — {{ website_settings.website_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a href="{% url 'services:home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'services:service_list' %}?category={{ service.category.slug }}">{{ service.category.name }}</a></li>
+            <li class="breadcrumb-item active">{{ service.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="bg-white p-4 rounded-4 border shadow-sm mb-4">
+                {% if service.image %}
+                <img src="{{ service.image.url }}" class="img-fluid rounded-3 mb-4 w-100 object-fit-cover" style="max-height:360px;" alt="{{ service.name }}">
+                {% endif %}
+                <span class="badge bg-orange text-white mb-2">{{ service.category.name }}</span>
+                <h1 class="fw-bold text-navy mb-2">{{ service.name }}</h1>
+                <p class="lead text-muted mb-3">{{ service.short_description }}</p>
+
+                <div class="d-flex flex-wrap gap-3 p-3 bg-light rounded-3 mb-4">
+                    <div>
+                        <span class="small text-muted d-block">Estimated Price</span>
+                        <span class="h4 fw-bold text-navy mb-0">{{ business_settings.currency_symbol }}{{ service.effective_price }}</span>
+                        {% if service.promo_price and service.promo_price < service.base_price %}
+                        <del class="small text-muted ms-1">{{ business_settings.currency_symbol }}{{ service.base_price }}</del>
+                        {% endif %}
+                    </div>
+                    <div class="vr"></div>
+                    <div>
+                        <span class="small text-muted d-block">Duration</span>
+                        <span class="fw-semibold">{{ service.estimated_duration }}</span>
+                    </div>
+                    <div class="vr"></div>
+                    <div>
+                        <span class="small text-muted d-block">Customer Rating</span>
+                        <span class="fw-semibold text-orange">★ {{ service.average_rating|default:"5.0" }}</span>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold text-navy">Service Description</h5>
+                <p class="text-secondary">{{ service.description|linebreaksbr }}</p>
+
+                {% if included_items %}
+                <h5 class="fw-bold text-navy mt-4">What's Included</h5>
+                <ul class="list-unstyled d-flex flex-column gap-2">
+                    {% for item in included_items %}
+                    <li class="d-flex align-items-center gap-2 small"><i data-lucide="check-circle" class="text-success" width="16"></i> {{ item }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% if service.service_areas.exists %}
+                <h5 class="fw-bold text-navy mt-4">Available Locations</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for area in service.service_areas.all %}
+                    <span class="badge bg-light text-dark border">{{ area.name }}, {{ area.city }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="bg-white p-4 rounded-4 border shadow-sm">
+                <h5 class="fw-bold text-navy mb-3">Customer Reviews ({{ reviews.count }})</h5>
+                {% for rev in reviews %}
+                <div class="border-bottom pb-3 mb-3">
+                    <div class="d-flex justify-content-between">
+                        <strong class="small">{{ rev.customer.full_name }}</strong>
+                        <span class="text-orange small">★ {{ rev.service_rating }}/5</span>
+                    </div>
+                    <p class="small text-muted mb-1">{{ rev.comment }}</p>
+                    <span class="small text-muted">{{ rev.created_at|date:"M d, Y" }}</span>
+                </div>
+                {% empty %}
+                <p class="small text-muted mb-0">No reviews yet. Be the first to review after your booking!</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-lg-5" id="whatsapp-book">
+            <div class="bg-white p-4 rounded-4 border shadow-sm sticky-top" style="top:90px;">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="badge bg-success-subtle text-success px-3 py-2">WhatsApp-First Booking</span>
+                </div>
+                <h4 class="fw-bold text-navy mb-1">Book {{ service.name }}</h4>
+                <p class="small text-muted mb-4">Your enquiry is saved with a tracking ID before opening WhatsApp.</p>
+
+                <form action="{% url 'bookings:initiate_whatsapp_booking' service.slug %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Full Name *</label>
+                        {{ booking_form.customer_name }}
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-semibold">Mobile Number *</label>
+                            {{ booking_form.customer_phone }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-semibold">WhatsApp Number</label>
+                            {{ booking_form.customer_whatsapp }}
+                        </div>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-semibold">Subcategory</label>
+                            {{ booking_form.subcategory }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-semibold">Service Area</label>
+                            {{ booking_form.service_area }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Complete Address *</label>
+                        {{ booking_form.address }}
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-semibold">Preferred Date *</label>
+                            {{ booking_form.preferred_date }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-semibold">Preferred Time *</label>
+                            {{ booking_form.preferred_time }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Problem / Requirements *</label>
+                        {{ booking_form.description }}
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-semibold">Attach Photo (optional)</label>
+                        {{ booking_form.photo }}
+                    </div>
+                    <button type="submit" class="btn btn-whatsapp w-100 py-3 rounded-3 d-flex align-items-center justify-content-center gap-2">
+                        <i data-lucide="message-circle" width="20"></i>
+                        <span>Book Through WhatsApp</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

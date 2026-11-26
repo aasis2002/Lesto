@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}My Profile — {{ website_settings.website_name }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="bg-white p-4 rounded-4 border shadow-sm">
+                <h4 class="fw-bold text-navy mb-3">Customer Profile</h4>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Full Name</label><input type="text" name="full_name" value="{{ user.full_name }}" class="form-control"></div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">WhatsApp Number</label><input type="text" name="whatsapp_number" value="{{ user.whatsapp_number }}" class="form-control"></div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Email</label><input type="email" name="email" value="{{ user.email }}" class="form-control"></div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Profile Photo</label><input type="file" name="profile_photo" class="form-control"></div>
+                        <div class="col-12"><label class="form-label small fw-semibold">Residential Address</label><textarea name="residential_address" class="form-control" rows="2">{{ profile.residential_address }}</textarea></div>
+                        <div class="col-md-3"><label class="form-label small fw-semibold">City</label><input type="text" name="city" value="{{ profile.city }}" class="form-control"></div>
+                        <div class="col-md-3"><label class="form-label small fw-semibold">District</label><input type="text" name="district" value="{{ profile.district }}" class="form-control"></div>
+                        <div class="col-md-3"><label class="form-label small fw-semibold">State</label><input type="text" name="state" value="{{ profile.state }}" class="form-control"></div>
+                        <div class="col-md-3"><label class="form-label small fw-semibold">Postal Code</label><input type="text" name="postal_code" value="{{ profile.postal_code }}" class="form-control"></div>
+                    </div>
+                    <button type="submit" class="btn btn-navy mt-4">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

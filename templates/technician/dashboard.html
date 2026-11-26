@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Technician Dashboard — {{ website_settings.website_name }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h3 class="fw-bold text-navy mb-0">Technician Portal — {{ profile.full_legal_name }}</h3>
+            <span class="small text-muted">
+                KYC Status: <span class="badge {% if profile.is_verified %}bg-success{% else %}bg-warning text-dark{% endif %}">{{ profile.get_verification_status_display }}</span>
+                • Rating: <strong class="text-orange">★ {{ stats.rating|default:"5.0" }}</strong>
+            </span>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'bookings:technician_earnings' %}" class="btn btn-outline-secondary btn-sm">Earnings &amp; Payouts</a>
+            <a href="{% url 'bookings:technician_profile' %}" class="btn btn-navy btn-sm">Profile &amp; Availability</a>
+        </div>
+    </div>
+
+    {% if not profile.is_verified %}
+    <div class="alert alert-warning small">
+        <strong>Verification Required:</strong> Your account is currently <strong>{{ profile.get_verification_status_display }}</strong>. You will start receiving job assignments once an administrator approves your KYC documents.
+    </div>
+    {% endif %}
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3"><div class="stat-card p-3"><div class="small text-muted">Total Assigned</div><div class="h4 fw-bold text-navy mb-0">{{ stats.total }}</div></div></div>
+        <div class="col-6 col-md-3"><div class="stat-card p-3"><div class="small text-muted">Pending / In Progress</div><div class="h4 fw-bold text-warning mb-0">{{ stats.pending|add:stats.in_progress }}</div></div></div>
+        <div class="col-6 col-md-3"><div class="stat-card p-3"><div class="small text-muted">Completed Jobs</div><div class="h4 fw-bold text-success mb-0">{{ stats.completed }}</div></div></div>
+        <div class="col-6 col-md-3"><div class="stat-card p-3"><div class="small text-muted">Total Earnings</div><div class="h4 fw-bold text-navy mb-0">{{ business_settings.currency_symbol }}{{ stats.total_earnings }}</div><div class="small text-muted">Pending Payout: {{ business_settings.currency_symbol }}{{ stats.pending_payouts }}</div></div></div>
+    </div>
+
+    <div class="bg-white p-4 rounded-4 border shadow-sm">
+        <h5 class="fw-bold text-navy mb-3">Assigned Jobs</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle small">
+                <thead class="table-light">
+                    <tr><th>Enquiry ID</th><th>Service</th><th>Customer</th><th>Date &amp; Time</th><th>Address</th><th>Status</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for job in jobs %}
+                    <tr>
+                        <td class="fw-bold">{{ job.enquiry_id }}</td>
+                        <td>{{ job.service_name_snapshot }}</td>
+                        <td>{{ job.customer_name }}<br><span class="text-muted">{{ job.customer_phone }}</span></td>
+                        <td>{{ job.preferred_date }}<br><span class="text-muted">{{ job.preferred_time }}</span></td>
+                        <td>{{ job.address|truncatechars:40 }}</td>
+                        <td><span class="badge bg-{{ job.status_badge_color }}">{{ job.get_status_display }}</span></td>
+                        <td><a href="{% url 'bookings:technician_job_detail' job.enquiry_id %}" class="btn btn-sm btn-orange">Manage Job</a></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7" class="text-center text-muted py-4">No jobs assigned yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

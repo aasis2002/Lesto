@@ -1,0 +1,63 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block page_title %}Admin Users &amp; Granular Permissions{% endblock %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="bg-white p-4 rounded-4 border shadow-sm mb-4">
+            <h6 class="fw-bold text-navy mb-3">Create Admin Role</h6>
+            <form method="post">
+                {% csrf_token %}<input type="hidden" name="action" value="create_role">
+                <div class="mb-2"><input type="text" name="name" class="form-control form-control-sm" placeholder="Role Name (e.g. Finance Officer)" required></div>
+                <div class="row g-1 small mb-3">
+                    <div class="col-6"><input type="checkbox" name="can_manage_bookings" checked> Bookings</div>
+                    <div class="col-6"><input type="checkbox" name="can_manage_services" checked> Services</div>
+                    <div class="col-6"><input type="checkbox" name="can_manage_customers" checked> Customers</div>
+                    <div class="col-6"><input type="checkbox" name="can_manage_technicians" checked> Technicians</div>
+                    <div class="col-6"><input type="checkbox" name="can_verify_kyc"> KYC Review</div>
+                    <div class="col-6"><input type="checkbox" name="can_manage_finance"> Finance</div>
+                    <div class="col-6"><input type="checkbox" name="can_approve_payouts"> Approve Payouts</div>
+                    <div class="col-6"><input type="checkbox" name="can_manage_settings"> Settings</div>
+                    <div class="col-6"><input type="checkbox" name="can_view_reports" checked> Reports</div>
+                    <div class="col-6"><input type="checkbox" name="can_view_audit_logs"> Audit Logs</div>
+                </div>
+                <button class="btn btn-orange btn-sm w-100">Create Role</button>
+            </form>
+        </div>
+
+        <div class="bg-white p-4 rounded-4 border shadow-sm">
+            <h6 class="fw-bold text-navy mb-3">Add Administrator User</h6>
+            <form method="post">
+                {% csrf_token %}<input type="hidden" name="action" value="create_admin">
+                <div class="mb-2"><input type="text" name="full_name" class="form-control form-control-sm" placeholder="Full Name" required></div>
+                <div class="mb-2"><input type="text" name="phone" class="form-control form-control-sm" placeholder="Phone Number" required></div>
+                <div class="mb-2"><input type="email" name="email" class="form-control form-control-sm" placeholder="Email"></div>
+                <div class="mb-2"><input type="text" name="designation" class="form-control form-control-sm" placeholder="Designation"></div>
+                <div class="mb-2"><select name="role_permission_id" class="form-select form-select-sm"><option value="">-- Select Role --</option>{% for r in roles %}<option value="{{ r.id }}">{{ r.name }}</option>{% endfor %}</select></div>
+                <div class="mb-3"><input type="password" name="password" class="form-control form-control-sm" placeholder="Password" required></div>
+                <button class="btn btn-navy btn-sm w-100">Create Admin User</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="bg-white p-4 rounded-4 border shadow-sm">
+            <h5 class="fw-bold text-navy mb-3">Administrator Accounts</h5>
+            <div class="table-responsive">
+                <table class="table table-hover small align-middle">
+                    <thead class="table-light"><tr><th>Name</th><th>Phone</th><th>Role</th><th>Type</th></tr></thead>
+                    <tbody>
+                        {% for a in admins %}
+                        <tr>
+                            <td class="fw-bold">{{ a.full_name|default:a.username }}</td>
+                            <td>{{ a.phone }}</td>
+                            <td>{{ a.admin_profile.role_permission.name|default:"Default" }}</td>
+                            <td>{% if a.is_superuser %}<span class="badge bg-navy">Superuser</span>{% else %}<span class="badge bg-secondary">Staff Admin</span>{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

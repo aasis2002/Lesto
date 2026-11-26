@@ -1,0 +1,57 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block page_title %}Services Management{% endblock %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="bg-white p-4 rounded-4 border shadow-sm">
+            <h6 class="fw-bold text-navy mb-3">Create New Service</h6>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}<input type="hidden" name="action" value="create">
+                <div class="mb-2"><label class="form-label small">Category *</label><select name="category_id" class="form-select form-select-sm" required>{% for c in categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}</select></div>
+                <div class="mb-2"><label class="form-label small">Subcategory</label><select name="subcategory_id" class="form-select form-select-sm"><option value="">-- Optional --</option>{% for s in subcategories %}<option value="{{ s.id }}">{{ s.category.name }} - {{ s.name }}</option>{% endfor %}</select></div>
+                <div class="mb-2"><label class="form-label small">Service Name *</label><input type="text" name="name" class="form-control form-control-sm" required></div>
+                <div class="mb-2"><label class="form-label small">Short Description *</label><input type="text" name="short_description" class="form-control form-control-sm" required></div>
+                <div class="mb-2"><label class="form-label small">Full Description *</label><textarea name="description" class="form-control form-control-sm" rows="2" required></textarea></div>
+                <div class="row g-2 mb-2">
+                    <div class="col-6"><label class="form-label small">Base Price *</label><input type="number" step="0.01" name="base_price" class="form-control form-control-sm" required></div>
+                    <div class="col-6"><label class="form-label small">Promo Price</label><input type="number" step="0.01" name="promo_price" class="form-control form-control-sm"></div>
+                </div>
+                <div class="row g-2 mb-2">
+                    <div class="col-6"><label class="form-label small">Duration</label><input type="text" name="estimated_duration" value="1 - 2 Hours" class="form-control form-control-sm"></div>
+                    <div class="col-6"><label class="form-label small">Tech Comm %</label><input type="number" step="0.01" name="technician_commission_rate" class="form-control form-control-sm" placeholder="Default"></div>
+                </div>
+                <div class="mb-2"><label class="form-label small">Service Image</label><input type="file" name="image" class="form-control form-control-sm"></div>
+                <div class="form-check form-check-inline small"><input type="checkbox" name="is_featured" class="form-check-input" checked> Featured</div>
+                <div class="form-check form-check-inline small"><input type="checkbox" name="is_popular" class="form-check-input"> Popular</div>
+                <div class="form-check form-check-inline small mb-3"><input type="checkbox" name="is_available" class="form-check-input" checked> Available</div>
+                <button type="submit" class="btn btn-orange btn-sm w-100">Save Service</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="bg-white p-4 rounded-4 border shadow-sm">
+            <h5 class="fw-bold text-navy mb-3">All Services ({{ services.count }})</h5>
+            <div class="table-responsive">
+                <table class="table table-hover small align-middle">
+                    <thead class="table-light"><tr><th>Service</th><th>Category</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody>
+                        {% for s in services %}
+                        <tr>
+                            <td class="fw-bold">{{ s.name }}</td>
+                            <td>{{ s.category.name }}</td>
+                            <td>{{ business_settings.currency_symbol }}{{ s.effective_price }}</td>
+                            <td><span class="badge {% if s.is_available %}bg-success{% else %}bg-secondary{% endif %}">{% if s.is_available %}Active{% else %}Disabled{% endif %}</span></td>
+                            <td class="d-flex gap-1">
+                                <form method="post">{% csrf_token %}<input type="hidden" name="action" value="toggle_availability"><input type="hidden" name="service_id" value="{{ s.id }}"><button class="btn btn-sm btn-outline-secondary">Toggle</button></form>
+                                <form method="post" onsubmit="return confirm('Delete service?');">{% csrf_token %}<input type="hidden" name="action" value="delete"><input type="hidden" name="service_id" value="{{ s.id }}"><button class="btn btn-sm btn-outline-danger">Delete</button></form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

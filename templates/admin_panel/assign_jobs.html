@@ -1,0 +1,35 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block page_title %}Assign Jobs Queue{% endblock %}
+{% block content %}
+<div class="bg-white p-4 rounded-4 border shadow-sm">
+    <h5 class="fw-bold text-navy mb-3">Unassigned Bookings ({{ unassigned.count }})</h5>
+    <div class="table-responsive">
+        <table class="table table-hover small align-middle">
+            <thead class="table-light"><tr><th>Enquiry ID</th><th>Service</th><th>Customer</th><th>Schedule</th><th>Status</th><th>Assign Verified Technician</th></tr></thead>
+            <tbody>
+                {% for b in unassigned %}
+                <tr>
+                    <td class="fw-bold"><a href="{% url 'dashboard:booking_detail_admin' b.enquiry_id %}">{{ b.enquiry_id }}</a></td>
+                    <td>{{ b.service_name_snapshot }}</td>
+                    <td>{{ b.customer_name }}<br><span class="text-muted">{{ b.address|truncatechars:35 }}</span></td>
+                    <td>{{ b.preferred_date }}<br><span class="text-muted">{{ b.preferred_time }}</span></td>
+                    <td><span class="badge bg-{{ b.status_badge_color }}">{{ b.get_status_display }}</span></td>
+                    <td>
+                        <form action="{% url 'dashboard:booking_detail_admin' b.enquiry_id %}" method="post" class="d-flex gap-2">
+                            {% csrf_token %}<input type="hidden" name="action" value="assign_technician">
+                            <select name="technician_id" class="form-select form-select-sm" required>
+                                <option value="">Select technician...</option>
+                                {% for t in verified_techs %}<option value="{{ t.id }}">{{ t.full_name }}</option>{% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-navy btn-sm">Assign</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center text-muted py-4">All active bookings have assigned technicians!</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block page_title %}System Audit &amp; Activity Logs{% endblock %}
+{% block content %}
+<div class="bg-white p-4 rounded-4 border shadow-sm mb-4">
+    <h5 class="fw-bold text-navy mb-3">Admin Activity Logs</h5>
+    <div class="table-responsive">
+        <table class="table table-hover small align-middle">
+            <thead class="table-light"><tr><th>Admin</th><th>Action</th><th>Target</th><th>Details</th><th>IP</th><th>Time</th></tr></thead>
+            <tbody>
+                {% for l in logs %}
+                <tr>
+                    <td class="fw-bold">{{ l.admin_user.full_name|default:"System" }}</td>
+                    <td>{{ l.action }}</td>
+                    <td>{{ l.target_model }} #{{ l.target_id }}</td>
+                    <td>{{ l.details|truncatechars:60 }}</td>
+                    <td>{{ l.ip_address|default:"-" }}</td>
+                    <td>{{ l.created_at|date:"M d, H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="bg-white p-4 rounded-4 border shadow-sm">
+    <h5 class="fw-bold text-navy mb-3">Secure KYC Document Access Logs</h5>
+    <div class="table-responsive">
+        <table class="table table-hover small align-middle">
+            <thead class="table-light"><tr><th>Document Owner</th><th>Accessed By</th><th>Purpose</th><th>IP</th><th>Time</th></tr></thead>
+            <tbody>
+                {% for dl in doc_logs %}
+                <tr>
+                    <td>{{ dl.document.user.full_name }}</td>
+                    <td>{{ dl.accessed_by.full_name }}</td>
+                    <td>{{ dl.purpose }}</td>
+                    <td>{{ dl.ip_address|default:"-" }}</td>
+                    <td>{{ dl.accessed_at|date:"M d, H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="text-muted text-center py-3">No document access events recorded yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

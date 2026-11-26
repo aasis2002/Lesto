@@ -1,0 +1,26 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block page_title %}Technician Commissions{% endblock %}
+{% block content %}
+<div class="bg-white p-4 rounded-4 border shadow-sm">
+    <h5 class="fw-bold text-navy mb-3">Commission Splits</h5>
+    <div class="table-responsive">
+        <table class="table table-hover small align-middle">
+            <thead class="table-light"><tr><th>Booking</th><th>Technician</th><th>Gross</th><th>Tech % / Share</th><th>Platform % / Share</th><th>Payout Status</th></tr></thead>
+            <tbody>
+                {% for c in commissions %}
+                <tr>
+                    <td class="fw-bold">{{ c.booking.enquiry_id }}</td>
+                    <td>{{ c.technician.full_name }}</td>
+                    <td>{{ business_settings.currency_symbol }}{{ c.gross_amount }}</td>
+                    <td class="text-success fw-semibold">{{ c.technician_rate }}% ({{ business_settings.currency_symbol }}{{ c.technician_amount }})</td>
+                    <td class="text-navy fw-semibold">{{ c.platform_rate }}% ({{ business_settings.currency_symbol }}{{ c.platform_amount }})</td>
+                    <td>{% if c.is_paid_out %}<span class="badge bg-success">Paid Out</span>{% else %}<span class="badge bg-warning text-dark">Pending</span>{% endif %}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center text-muted py-4">No commission splits generated yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

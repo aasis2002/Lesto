@@ -1,0 +1,35 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block page_title %}Technicians &amp; Performance Scorecard{% endblock %}
+{% block content %}
+<div class="bg-white p-4 rounded-4 border shadow-sm">
+    <h5 class="fw-bold text-navy mb-3">Registered Technicians</h5>
+    <div class="table-responsive">
+        <table class="table table-hover small align-middle">
+            <thead class="table-light"><tr><th>Technician</th><th>KYC Status</th><th>Jobs (Done/Total)</th><th>Rating</th><th>Custom Comm %</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for t in technicians %}
+                <tr>
+                    <td class="fw-bold">{{ t.full_name }}<br><span class="text-muted fw-normal">{{ t.phone }} • {{ t.technician_profile.experience_years }} yrs exp</span></td>
+                    <td><span class="badge {% if t.technician_profile.is_verified %}bg-success{% else %}bg-warning text-dark{% endif %}">{{ t.technician_profile.get_verification_status_display }}</span></td>
+                    <td>{{ t.completed_jobs }} / {{ t.total_jobs }} <span class="text-muted">({{ t.cancelled_jobs }} cancelled)</span></td>
+                    <td class="text-orange fw-bold">★ {{ t.technician_profile.average_rating|default:"5.0" }}</td>
+                    <td>
+                        <form method="post" class="d-flex gap-1" style="max-width:150px;">
+                            {% csrf_token %}<input type="hidden" name="action" value="update_commission"><input type="hidden" name="user_id" value="{{ t.id }}">
+                            <input type="number" step="0.01" name="custom_commission_rate" value="{{ t.technician_profile.custom_commission_rate|default:'' }}" class="form-control form-control-sm" placeholder="Default">
+                            <button class="btn btn-sm btn-outline-primary">Save</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="post">
+                            {% csrf_token %}<input type="hidden" name="action" value="toggle_suspend"><input type="hidden" name="user_id" value="{{ t.id }}">
+                            <button class="btn btn-sm {% if t.is_suspended %}btn-success{% else %}btn-outline-danger{% endif %}">{% if t.is_suspended %}Restore{% else %}Suspend{% endif %}</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

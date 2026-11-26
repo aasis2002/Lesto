@@ -1,0 +1,25 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block page_title %}Website Management &amp; Branding{% endblock %}
+{% block content %}
+<div class="bg-white p-4 rounded-4 border shadow-sm">
+    <h5 class="fw-bold text-navy mb-3">Website Branding &amp; Contact Settings</h5>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col-md-4"><label class="form-label small">Website Name</label><input type="text" name="website_name" value="{{ ws.website_name }}" class="form-control form-control-sm"></div>
+            <div class="col-md-4"><label class="form-label small">Tagline</label><input type="text" name="tagline" value="{{ ws.tagline }}" class="form-control form-control-sm"></div>
+            <div class="col-md-4"><label class="form-label small">Sub Tagline</label><input type="text" name="sub_tagline" value="{{ ws.sub_tagline }}" class="form-control form-control-sm"></div>
+            <div class="col-12"><label class="form-label small">Website Description</label><textarea name="description" class="form-control form-control-sm" rows="2">{{ ws.description }}</textarea></div>
+            <div class="col-md-4"><label class="form-label small">Contact Phone</label><input type="text" name="contact_phone" value="{{ ws.contact_phone }}" class="form-control form-control-sm"></div>
+            <div class="col-md-4"><label class="form-label small">Contact Email</label><input type="email" name="contact_email" value="{{ ws.contact_email }}" class="form-control form-control-sm"></div>
+            <div class="col-md-4"><label class="form-label small">Business Address</label><input type="text" name="business_address" value="{{ ws.business_address }}" class="form-control form-control-sm"></div>
+            <div class="col-md-3"><label class="form-label small">Primary Color</label><input type="text" name="primary_color" value="{{ ws.primary_color }}" class="form-control form-control-sm"></div>
+            <div class="col-md-3"><label class="form-label small">Accent Color</label><input type="text" name="accent_color" value="{{ ws.accent_color }}" class="form-control form-control-sm"></div>
+            <div class="col-md-3"><label class="form-label small">Upload Logo</label><input type="file" name="logo" class="form-control form-control-sm"></div>
+            <div class="col-md-3"><label class="form-label small">Upload Favicon</label><input type="file" name="favicon" class="form-control form-control-sm"></div>
+            <div class="col-12"><label class="form-label small">Footer Text</label><input type="text" name="footer_text" value="{{ ws.footer_text }}" class="form-control form-control-sm"></div>
+        </div>
+        <button type="submit" class="btn btn-navy mt-4">Save Website Settings</button>
+    </form>
+</div>
+{% endblock %}

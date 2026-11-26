@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}All Services — {{ website_settings.website_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-3">
+            <div class="bg-white p-4 rounded-4 border shadow-sm">
+                <h5 class="fw-bold text-navy mb-3">Filter Services</h5>
+                <form method="get">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Search</label>
+                        <input type="text" name="q" value="{{ filters.q }}" class="form-control" placeholder="Keyword...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Category</label>
+                        <select name="category" class="form-select">
+                            <option value="">All Categories</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.slug }}" {% if filters.category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Location / Area</label>
+                        <select name="area" class="form-select">
+                            <option value="">All Areas</option>
+                            {% for area in areas %}
+                            <option value="{{ area.id }}" {% if filters.area == area.id|stringformat:"s" %}selected{% endif %}>{{ area.name }}, {{ area.city }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-semibold">Min Price</label>
+                            <input type="number" name="min_price" value="{{ filters.min_price }}" class="form-control" placeholder="0">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-semibold">Max Price</label>
+                            <input type="number" name="max_price" value="{{ filters.max_price }}" class="form-control" placeholder="50000">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Sort By</label>
+                        <select name="sort" class="form-select">
+                            <option value="featured" {% if filters.sort == 'featured' %}selected{% endif %}>Featured</option>
+                            <option value="price_low" {% if filters.sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="price_high" {% if filters.sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="newest" {% if filters.sort == 'newest' %}selected{% endif %}>Newest</option>
+                        </select>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-navy">Apply Filters</button>
+                        <a href="{% url 'services:service_list' %}" class="btn btn-outline-secondary btn-sm">Reset</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold text-navy mb-0">Available Services ({{ services|length }})</h3>
+            </div>
+            <div class="row g-4">
+                {% for srv in services %}
+                <div class="col-md-6 col-xl-4">
+                    <div class="service-card h-100 d-flex flex-column overflow-hidden">
+                        {% if srv.image %}
+                        <img src="{{ srv.image.url }}" class="w-100 object-fit-cover" style="height:170px;" alt="{{ srv.name }}">
+                        {% else %}
+                        <div class="bg-navy bg-opacity-10 d-flex align-items-center justify-content-center" style="height:170px;">
+                            <i data-lucide="{{ srv.category.icon_name|default:'wrench' }}" class="text-navy" width="42" height="42"></i>
+                        </div>
+                        {% endif %}
+                        <div class="p-3 d-flex flex-column flex-grow-1">
+                            <span class="badge bg-light text-navy border align-self-start mb-2">{{ srv.category.name }}</span>
+                            <h6 class="fw-bold mb-1">{{ srv.name }}</h6>
+                            <p class="small text-muted flex-grow-1">{{ srv.short_description|truncatechars:90 }}</p>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="fw-bold text-navy">{{ business_settings.currency_symbol }}{{ srv.effective_price }}</span>
+                                <span class="small text-muted">{{ srv.estimated_duration }}</span>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'services:service_detail' srv.slug %}" class="btn btn-outline-secondary btn-sm">View Details</a>
+                                <a href="{% url 'services:service_detail' srv.slug %}#whatsapp-book" class="btn btn-whatsapp btn-sm">Book Through WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="p-5 bg-white rounded-4 border text-center">
+                        <p class="text-muted mb-2">No services matched your filters.</p>
+                        <a href="{% url 'services:service_list' %}" class="btn btn-orange btn-sm">Show All Services</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block page_title %}Complaints &amp; Support{% endblock %}
+{% block content %}
+<div class="bg-white p-4 rounded-4 border shadow-sm">
+    <h5 class="fw-bold text-navy mb-3">Customer Complaints</h5>
+    {% for c in complaints %}
+    <div class="p-3 border rounded-3 mb-3 small">
+        <div class="d-flex justify-content-between"><strong>{{ c.subject }} ({{ c.customer.full_name }})</strong><span class="badge bg-warning text-dark">{{ c.get_status_display }}</span></div>
+        <p class="my-2 text-muted">{{ c.description }}</p>
+        <form method="post" class="d-flex gap-2">
+            {% csrf_token %}<input type="hidden" name="complaint_id" value="{{ c.id }}">
+            <select name="status" class="form-select form-select-sm" style="width:auto;"><option value="open" {% if c.status == 'open' %}selected{% endif %}>Open</option><option value="investigating" {% if c.status == 'investigating' %}selected{% endif %}>Investigating</option><option value="resolved" {% if c.status == 'resolved' %}selected{% endif %}>Resolved</option><option value="closed" {% if c.status == 'closed' %}selected{% endif %}>Closed</option></select>
+            <input type="text" name="resolution_notes" value="{{ c.resolution_notes }}" class="form-control form-control-sm" placeholder="Resolution notes">
+            <button class="btn btn-navy btn-sm">Update</button>
+        </form>
+    </div>
+    {% empty %}
+    <p class="text-muted small">No complaints logged.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Technician Profile — {{ website_settings.website_name }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="bg-white p-4 rounded-4 border shadow-sm">
+                <h4 class="fw-bold text-navy mb-3">Technician Profile &amp; Availability</h4>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" name="is_available" id="availSwitch" {% if profile.is_available %}checked{% endif %}>
+                        <label class="form-check-label fw-semibold" for="availSwitch">Available for New Job Assignments</label>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" name="live_gps_consent" id="gpsSwitch" {% if profile.live_gps_consent %}checked{% endif %}>
+                        <label class="form-check-label small" for="gpsSwitch">Enable Optional Live GPS Sharing During Active Jobs (Consent Required)</label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Skills &amp; Specializations</label>
+                        <textarea name="skills_summary" class="form-control" rows="3">{{ profile.skills_summary }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-navy">Update Preferences</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

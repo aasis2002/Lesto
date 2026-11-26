@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Customer Dashboard — {{ website_settings.website_name }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h3 class="fw-bold text-navy mb-0">Welcome, {{ user.full_name }}</h3>
+            <span class="small text-muted">KYC Status: <span class="badge bg-secondary">{{ user.customer_profile.get_verification_status_display }}</span></span>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{% url 'services:service_list' %}" class="btn btn-orange btn-sm">+ Book a Service</a>
+            <a href="{% url 'core:upload_kyc' %}" class="btn btn-outline-secondary btn-sm">KYC Verification</a>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-lg-2"><div class="stat-card p-3"><div class="small text-muted">Total</div><div class="h4 fw-bold text-navy mb-0">{{ stats.total }}</div></div></div>
+        <div class="col-6 col-md-4 col-lg-2"><div class="stat-card p-3"><div class="small text-muted">Pending</div><div class="h4 fw-bold text-info mb-0">{{ stats.pending }}</div></div></div>
+        <div class="col-6 col-md-4 col-lg-2"><div class="stat-card p-3"><div class="small text-muted">Confirmed</div><div class="h4 fw-bold text-primary mb-0">{{ stats.confirmed }}</div></div></div>
+        <div class="col-6 col-md-4 col-lg-2"><div class="stat-card p-3"><div class="small text-muted">Active Jobs</div><div class="h4 fw-bold text-warning mb-0">{{ stats.active }}</div></div></div>
+        <div class="col-6 col-md-4 col-lg-2"><div class="stat-card p-3"><div class="small text-muted">Completed</div><div class="h4 fw-bold text-success mb-0">{{ stats.completed }}</div></div></div>
+        <div class="col-6 col-md-4 col-lg-2"><div class="stat-card p-3"><div class="small text-muted">Cancelled</div><div class="h4 fw-bold text-danger mb-0">{{ stats.cancelled }}</div></div></div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="bg-white p-4 rounded-4 border shadow-sm">
+                <h5 class="fw-bold text-navy mb-3">Recent Bookings</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Enquiry ID</th>
+                                <th>Service</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Amount</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for b in recent_bookings %}
+                            <tr>
+                                <td class="fw-bold">{{ b.enquiry_id }}</td>
+                                <td>{{ b.service_name_snapshot }}</td>
+                                <td>{{ b.preferred_date }}</td>
+                                <td><span class="badge bg-{{ b.status_badge_color }}">{{ b.get_status_display }}</span></td>
+                                <td>{{ business_settings.currency_symbol }}{{ b.final_price }}</td>
+                                <td><a href="{% url 'bookings:customer_booking_detail' b.enquiry_id %}" class="btn btn-sm btn-outline-primary">View</a></td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="6" class="text-center text-muted py-4">No bookings yet. <a href="{% url 'services:service_list' %}">Browse services</a></td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="bg-white p-4 rounded-4 border shadow-sm mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold text-navy mb-0">Saved Addresses</h6>
+                    <a href="{% url 'bookings:customer_addresses' %}" class="small">Manage</a>
+                </div>
+                {% for a in addresses|slice:":3" %}
+                <div class="p-2 bg-light rounded mb-2 small">
+                    <strong>{{ a.label }}</strong> — {{ a.full_address|truncatechars:50 }}
+                </div>
+                {% empty %}
+                <p class="small text-muted mb-0">No saved addresses.</p>
+                {% endfor %}
+            </div>
+            <div class="bg-white p-4 rounded-4 border shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold text-navy mb-0">Recent Payments</h6>
+                    <a href="{% url 'bookings:customer_payments' %}" class="small">All</a>
+                </div>
+                {% for p in payments %}
+                <div class="d-flex justify-content-between small border-bottom py-2">
+                    <span>{{ p.booking.enquiry_id }} ({{ p.get_method_display }})</span>
+                    <strong>{{ business_settings.currency_symbol }}{{ p.amount }}</strong>
+                </div>
+                {% empty %}
+                <p class="small text-muted mb-0">No payments recorded yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

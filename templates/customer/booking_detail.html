@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}Booking {{ booking.enquiry_id }} — {{ website_settings.website_name }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <a href="{% url 'bookings:customer_dashboard' %}" class="small text-decoration-none">&larr; Back to Dashboard</a>
+    <div class="row g-4 mt-1">
+        <div class="col-lg-8">
+            <div class="bg-white p-4 rounded-4 border shadow-sm mb-4">
+                <div class="d-flex justify-content-between flex-wrap gap-2 mb-3">
+                    <div>
+                        <span class="badge bg-navy">{{ booking.enquiry_id }}</span>
+                        <h3 class="fw-bold text-navy mt-1 mb-0">{{ booking.service_name_snapshot }}</h3>
+                    </div>
+                    <span class="badge bg-{{ booking.status_badge_color }} align-self-start fs-6">{{ booking.get_status_display }}</span>
+                </div>
+                <div class="row g-3 small bg-light p-3 rounded-3 mb-4">
+                    <div class="col-md-4"><strong>Preferred Date:</strong><br>{{ booking.preferred_date }}</div>
+                    <div class="col-md-4"><strong>Time Slot:</strong><br>{{ booking.preferred_time }}</div>
+                    <div class="col-md-4"><strong>Final Price:</strong><br>{{ business_settings.currency_symbol }}{{ booking.final_price }} ({{ booking.get_payment_status_display }})</div>
+                    <div class="col-12"><strong>Address:</strong> {{ booking.address }}</div>
+                    <div class="col-12"><strong>Description:</strong> {{ booking.description }}</div>
+                </div>
+
+                {% if booking.assigned_technician %}
+                <div class="p-3 border rounded-3 mb-4 bg-success-subtle bg-opacity-10">
+                    <h6 class="fw-bold text-navy mb-1">Assigned Technician</h6>
+                    <div class="small">{{ booking.assigned_technician.full_name }} • {{ booking.assigned_technician.phone }}</div>
+                </div>
+                {% endif %}
+
+                <h6 class="fw-bold text-navy mb-3">Status Timeline</h6>
+                <div class="ms-2 mb-3">
+                    {% for h in booking.status_history.all %}
+                    <div class="timeline-step completed">
+                        <div class="fw-semibold small">{{ h.to_status|title }}</div>
+                        <div class="small text-muted">{{ h.created_at|date:"M d, Y H:i" }} {% if h.note %}— {{ h.note }}{% endif %}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% if booking.attachments.exists %}
+                <h6 class="fw-bold text-navy mb-2">Photos</h6>
+                <div class="row g-2">
+                    {% for att in booking.attachments.all %}
+                    <div class="col-4 col-md-3">
+                        <img src="{{ att.file.url }}" class="img-fluid rounded border" alt="{{ att.get_stage_display }}">
+                        <div class="small text-muted">{{ att.get_stage_display }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            {% if can_review %}
+            <div class="bg-white p-4 rounded-4 border shadow-sm mb-4">
+                <h5 class="fw-bold text-navy mb-3">Rate &amp; Review Service</h5>
+                <form action="{% url 'bookings:customer_submit_review' booking.enquiry_id %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row g-3 mb-3">
+                        <div class="col-6"><label class="form-label small">Service Rating</label>{{ review_form.service_rating }}</div>
+                        <div class="col-6"><label class="form-label small">Technician Rating</label>{{ review_form.technician_rating }}</div>
+                        <div class="col-12"><label class="form-label small">Comment</label>{{ review_form.comment }}</div>
+                        <div class="col-12"><label class="form-label small">Feedback Photo (Optional)</label>{{ review_form.photo }}</div>
+                    </div>
+                    <button type="submit" class="btn btn-orange btn-sm">Submit Review</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            {% if booking.whatsapp_redirect_url %}
+            <div class="bg-white p-4 rounded-4 border shadow-sm mb-3">
+                <h6 class="fw-bold text-navy mb-2">WhatsApp Support</h6>
+                <a href="{{ booking.whatsapp_redirect_url }}" target="_blank" rel="noopener" class="btn btn-whatsapp w-100 btn-sm">Open Booking WhatsApp Chat</a>
+            </div>
+            {% endif %}
+
+            {% if can_cancel %}
+            <div class="bg-white p-4 rounded-4 border shadow-sm mb-3">
+                <h6 class="fw-bold text-danger mb-2">Cancel Booking</h6>
+                <form action="{% url 'bookings:customer_cancel_booking' booking.enquiry_id %}" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="reason" class="form-control form-control-sm mb-2" placeholder="Reason for cancellation" required>
+                    <button type="submit" class="btn btn-outline-danger btn-sm w-100">Cancel Request</button>
+                </form>
+            </div>
+            {% endif %}
+
+            <div class="bg-white p-4 rounded-4 border shadow-sm">
+                <h6 class="fw-bold text-navy mb-2">Report an Issue / Complaint</h6>
+                <form action="{% url 'bookings:customer_submit_complaint' booking.enquiry_id %}" method="post">
+                    {% csrf_token %}
+                    <div class="mb-2">{{ complaint_form.subject }}</div>
+                    <div class="mb-2">{{ complaint_form.description }}</div>
+                    <button type="submit" class="btn btn-navy btn-sm w-100">Submit Complaint</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
