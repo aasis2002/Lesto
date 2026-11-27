@@ -12,6 +12,9 @@
     --letsto-danger: #DC2626;
     --letsto-border: #E2E8F0;
     --letsto-heading: #0F172A;
+    --mui-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --clay-shadow: 0 14px 30px -8px rgba(9, 47, 91, 0.10), 0 4px 10px -2px rgba(9, 47, 91, 0.05), inset 0 2px 4px rgba(255, 255, 255, 0.9);
+    --clay-shadow-hover: 0 22px 42px -10px rgba(9, 47, 91, 0.16), 0 8px 18px -4px rgba(255, 133, 27, 0.14), inset 0 2px 6px rgba(255, 255, 255, 0.95);
 }
 
 html, body {
@@ -19,6 +22,7 @@ html, body {
     font-family: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
     background-color: var(--letsto-light-grey);
     color: var(--letsto-heading);
+    scroll-behavior: smooth;
 }
 
 .bg-navy { background-color: var(--letsto-navy) !important; }
@@ -29,16 +33,28 @@ html, body {
 .bg-soft-orange { background-color: var(--letsto-soft-orange) !important; }
 .text-grey { color: var(--letsto-text) !important; }
 
+/* Material UI inspired elevated buttons */
+.btn {
+    border-radius: 12px;
+    transition: transform 0.2s var(--mui-ease), box-shadow 0.2s var(--mui-ease), background-color 0.2s ease;
+}
+.btn:active {
+    transform: scale(0.97);
+}
+
 .btn-orange {
     background-color: var(--letsto-orange);
     border-color: var(--letsto-orange);
     color: #fff;
     font-weight: 600;
+    box-shadow: 0 6px 16px rgba(255, 133, 27, 0.28);
 }
 .btn-orange:hover {
     background-color: var(--letsto-orange-hover);
     border-color: var(--letsto-orange-hover);
     color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(255, 133, 27, 0.36);
 }
 
 .btn-navy {
@@ -46,11 +62,14 @@ html, body {
     border-color: var(--letsto-navy);
     color: #fff;
     font-weight: 600;
+    box-shadow: 0 6px 16px rgba(9, 47, 91, 0.22);
 }
 .btn-navy:hover {
     background-color: var(--letsto-dark-navy);
     border-color: var(--letsto-dark-navy);
     color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(9, 47, 91, 0.30);
 }
 
 .btn-whatsapp {
@@ -58,11 +77,13 @@ html, body {
     border-color: #25D366;
     color: #fff;
     font-weight: 600;
+    box-shadow: 0 6px 16px rgba(37, 211, 102, 0.25);
 }
 .btn-whatsapp:hover {
     background-color: #1EBE57;
     border-color: #1EBE57;
     color: #fff;
+    transform: translateY(-2px);
 }
 
 .announcement-bar {
@@ -72,9 +93,10 @@ html, body {
 }
 
 .navbar-letsto {
-    background: var(--letsto-white);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--letsto-border);
-    box-shadow: 0 2px 10px rgba(9, 47, 91, 0.05);
+    box-shadow: 0 4px 20px rgba(9, 47, 91, 0.05);
 }
 
 .brand-logo-img {
@@ -84,7 +106,8 @@ html, body {
 }
 
 .hero-section {
-    background: linear-gradient(135deg, var(--letsto-navy) 0%, #0D3D75 70%, #124C8E 100%);
+    background: radial-gradient(circle at top right, rgba(255, 133, 27, 0.18), transparent 42%),
+                linear-gradient(135deg, var(--letsto-navy) 0%, #0D3D75 68%, #124C8E 100%);
     color: #FFFFFF;
     position: relative;
     overflow: hidden;
@@ -98,33 +121,96 @@ html, body {
     font-size: 0.85rem;
 }
 
-.service-card, .category-card, .stat-card {
+/* Claymorphism + Bento UI Surfaces */
+.clay-card, .service-card, .category-card, .stat-card {
     background: var(--letsto-white);
-    border: 1px solid var(--letsto-border);
-    border-radius: 1rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 1.35rem;
+    box-shadow: var(--clay-shadow);
+    transition: transform 0.32s var(--mui-ease), box-shadow 0.32s var(--mui-ease), border-color 0.32s ease;
 }
 
-.service-card:hover, .category-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(9, 47, 91, 0.09);
-    border-color: #CBD5E1;
+.clay-card:hover, .service-card:hover, .category-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--clay-shadow-hover);
+    border-color: rgba(255, 133, 27, 0.35);
 }
 
-.category-icon-box {
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
-    background: rgba(9, 47, 91, 0.08);
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.25rem;
+}
+.bento-span-12 { grid-column: span 12; }
+.bento-span-7 { grid-column: span 7; }
+.bento-span-5 { grid-column: span 5; }
+.bento-span-4 { grid-column: span 4; }
+.bento-span-6 { grid-column: span 6; }
+
+@media (max-width: 991.98px) {
+    .bento-span-7, .bento-span-5, .bento-span-4, .bento-span-6 {
+        grid-column: span 12;
+    }
+}
+
+.clay-icon-badge, .category-icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    background: linear-gradient(145deg, #FFFFFF, #EDF2F8);
     color: var(--letsto-navy);
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 6px 6px 14px rgba(9, 47, 91, 0.08), -4px -4px 10px rgba(255, 255, 255, 0.95), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+    transition: transform 0.3s var(--mui-ease), background 0.3s ease, color 0.3s ease;
 }
 
-.category-card:hover .category-icon-box {
-    background: var(--letsto-orange);
+.category-card:hover .category-icon-box,
+.clay-card:hover .clay-icon-badge {
+    background: linear-gradient(145deg, #FF963B, #FF851B);
     color: #FFFFFF;
+    transform: scale(1.06) rotate(-3deg);
+}
+
+.clay-pill {
+    background: linear-gradient(145deg, #FFFFFF, #F1F5F9);
+    border: 1px solid #E2E8F0;
+    border-radius: 999px;
+    box-shadow: 4px 4px 10px rgba(9, 47, 91, 0.06), -3px -3px 8px rgba(255, 255, 255, 0.9);
+}
+
+/* Valley Map Container */
+#valleyMap {
+    height: 340px;
+    width: 100%;
+    border-radius: 1rem;
+    z-index: 1;
+    background: #E8EFF7;
+}
+
+/* Scroll Reveal & Micro-animations */
+.reveal-up {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.6s var(--mui-ease), transform 0.6s var(--mui-ease);
+}
+.reveal-up.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@keyframes floatSlow {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+}
+.float-slow {
+    animation: floatSlow 4.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal-up { opacity: 1; transform: none; transition: none; }
+    .float-slow { animation: none; }
 }
 
 .floating-whatsapp {
@@ -136,16 +222,16 @@ html, body {
     color: #fff;
     border-radius: 999px;
     padding: 12px 20px;
-    box-shadow: 0 8px 24px rgba(37, 211, 102, 0.35);
+    box-shadow: 0 10px 26px rgba(37, 211, 102, 0.38);
     display: flex;
     align-items: center;
     gap: 8px;
     font-weight: 600;
     text-decoration: none;
-    transition: transform 0.2s ease;
+    transition: transform 0.25s var(--mui-ease);
 }
 .floating-whatsapp:hover {
-    transform: scale(1.04);
+    transform: scale(1.06);
     color: #fff;
 }
 

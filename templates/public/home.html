@@ -25,7 +25,7 @@
                             </select>
                         </div>
                         <div class="col-md-3 d-grid">
-                            <button type="submit" class="btn btn-orange py-2 rounded-3">Book a Service</button>
+                            <button type="submit" class="btn btn-orange py-2">Book a Service</button>
                         </div>
                     </div>
                 </form>
@@ -35,14 +35,30 @@
                     <a href="#how-it-works" class="btn btn-outline-light px-4">How It Works</a>
                 </div>
 
-                <div class="d-flex flex-wrap gap-4 small opacity-75">
-                    <span><i data-lucide="check-circle" width="16"></i> KYC-Verified Technicians</span>
-                    <span><i data-lucide="check-circle" width="16"></i> Transparent NPR Pricing</span>
-                    <span><i data-lucide="check-circle" width="16"></i> WhatsApp-First Support</span>
+                <div class="row g-2">
+                    <div class="col-4">
+                        <div class="p-2 px-3 rounded-3 bg-white bg-opacity-10 border border-white border-opacity-10 small">
+                            <strong class="d-block text-orange">160+ Areas</strong>
+                            <span class="opacity-75">KTM • LAL • BKT</span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 px-3 rounded-3 bg-white bg-opacity-10 border border-white border-opacity-10 small">
+                            <strong class="d-block text-orange">100% KYC</strong>
+                            <span class="opacity-75">Verified Techs</span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 px-3 rounded-3 bg-white bg-opacity-10 border border-white border-opacity-10 small">
+                            <strong class="d-block text-orange">7 Days</strong>
+                            <span class="opacity-75">WhatsApp Desk</span>
+                        </div>
+                    </div>
                 </div>
             </div>
+
             <div class="col-lg-5 text-center">
-                <div class="bg-white rounded-4 p-4 shadow-lg text-dark">
+                <div class="clay-card p-4 p-md-5 text-dark float-slow">
                     <img src="{% static 'images/letsto-logo.jpg' %}" alt="LetsTo — Your Trusted Home Service Partner" class="img-fluid rounded-3 mb-3" style="max-height:130px;width:auto;object-fit:contain;">
                     <h6 class="fw-bold text-navy mb-1">{{ website_settings.sub_tagline }}</h6>
                     <p class="small text-grey mb-3">Your Home. Our Responsibility. Instant booking across Kathmandu, Lalitpur &amp; Bhaktapur.</p>
@@ -64,23 +80,23 @@
                 <p class="small text-grey mb-0">Service availability depends on your selected locality.</p>
             </div>
             <div class="col-lg-8">
-                <div class="row g-2">
+                <div class="row g-3">
                     <div class="col-4">
-                        <a href="{% url 'services:service_list' %}?q=Kathmandu" class="d-block p-3 rounded-3 border text-decoration-none bg-light text-center">
+                        <a href="{% url 'services:service_list' %}?q=Kathmandu" class="clay-card d-block p-3 text-decoration-none text-center">
                             <strong class="text-navy d-block">Kathmandu</strong>
-                            <span class="small text-grey">80+ Areas</span>
+                            <span class="small text-grey">81 Areas</span>
                         </a>
                     </div>
                     <div class="col-4">
-                        <a href="{% url 'services:service_list' %}?q=Lalitpur" class="d-block p-3 rounded-3 border text-decoration-none bg-light text-center">
+                        <a href="{% url 'services:service_list' %}?q=Lalitpur" class="clay-card d-block p-3 text-decoration-none text-center">
                             <strong class="text-navy d-block">Lalitpur</strong>
-                            <span class="small text-grey">45+ Areas</span>
+                            <span class="small text-grey">45 Areas</span>
                         </a>
                     </div>
                     <div class="col-4">
-                        <a href="{% url 'services:service_list' %}?q=Bhaktapur" class="d-block p-3 rounded-3 border text-decoration-none bg-light text-center">
+                        <a href="{% url 'services:service_list' %}?q=Bhaktapur" class="clay-card d-block p-3 text-decoration-none text-center">
                             <strong class="text-navy d-block">Bhaktapur</strong>
-                            <span class="small text-grey">34+ Areas</span>
+                            <span class="small text-grey">34 Areas</span>
                         </a>
                     </div>
                 </div>
@@ -91,16 +107,16 @@
 
 <section class="py-5">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-end mb-4">
+        <div class="d-flex justify-content-between align-items-end mb-4 reveal-up">
             <div>
                 <span class="text-orange fw-bold small text-uppercase">Service Categories</span>
                 <h2 class="fw-bold text-navy mb-0">Popular Service Categories</h2>
             </div>
             <a href="{% url 'services:service_list' %}" class="btn btn-outline-secondary btn-sm">View All</a>
         </div>
-        <div class="row g-3">
+        <div class="row g-4">
             {% for cat in categories %}
-            <div class="col-6 col-md-4 col-lg-3">
+            <div class="col-6 col-md-4 col-lg-3 reveal-up">
                 <a href="{% url 'services:service_list' %}?category={{ cat.slug }}" class="text-decoration-none text-dark">
                     <div class="category-card p-4 h-100 text-center">
                         <div class="category-icon-box mx-auto mb-3">
@@ -118,7 +134,7 @@
 
 <section class="py-5 bg-white border-top border-bottom">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-end mb-4">
+        <div class="d-flex justify-content-between align-items-end mb-4 reveal-up">
             <div>
                 <span class="text-orange fw-bold small text-uppercase">Featured Services</span>
                 <h2 class="fw-bold text-navy mb-0">Most Booked in Kathmandu Valley</h2>
@@ -127,13 +143,15 @@
         </div>
         <div class="row g-4">
             {% for srv in popular_services %}
-            <div class="col-md-6 col-lg-3">
+            <div class="col-md-6 col-lg-3 reveal-up">
                 <div class="service-card h-100 d-flex flex-column overflow-hidden">
                     {% if srv.image %}
                     <img src="{{ srv.image.url }}" class="w-100 object-fit-cover" style="height:170px;" alt="{{ srv.name }}">
                     {% else %}
-                    <div class="bg-navy bg-opacity-10 d-flex align-items-center justify-content-center" style="height:170px;">
-                        <i data-lucide="{{ srv.category.icon_name|default:'wrench' }}" class="text-navy" width="44" height="44"></i>
+                    <div class="bg-soft-orange d-flex align-items-center justify-content-center" style="height:160px;">
+                        <div class="clay-icon-badge">
+                            <i data-lucide="{{ srv.category.icon_name|default:'wrench' }}" width="28" height="28"></i>
+                        </div>
                     </div>
                     {% endif %}
                     <div class="p-3 d-flex flex-column flex-grow-1">
@@ -163,39 +181,54 @@
 
 <section class="py-5" id="how-it-works">
     <div class="container">
-        <div class="text-center mb-5">
+        <div class="text-center mb-5 reveal-up">
             <span class="text-orange fw-bold small text-uppercase">Simple Process</span>
             <h2 class="fw-bold text-navy">How LetsTo Works</h2>
             <p class="small text-grey">From cleaning to repairs, LetsTo gets it done in 6 simple steps.</p>
         </div>
         <div class="row g-3 text-center">
-            <div class="col-6 col-md-4 col-lg-2"><div class="p-3 bg-white rounded-4 border h-100"><div class="category-icon-box mx-auto mb-2"><i data-lucide="search" width="22"></i></div><h6 class="fw-bold small">1. Choose Service</h6><p class="small text-grey mb-0">Pick your home or office service.</p></div></div>
-            <div class="col-6 col-md-4 col-lg-2"><div class="p-3 bg-white rounded-4 border h-100"><div class="category-icon-box mx-auto mb-2"><i data-lucide="clipboard-list" width="22"></i></div><h6 class="fw-bold small">2. Submit Request</h6><p class="small text-grey mb-0">Enter address, date &amp; time slot.</p></div></div>
-            <div class="col-6 col-md-4 col-lg-2"><div class="p-3 bg-white rounded-4 border h-100"><div class="category-icon-box mx-auto mb-2"><i data-lucide="message-circle" width="22"></i></div><h6 class="fw-bold small">3. Connect via WhatsApp</h6><p class="small text-grey mb-0">Confirm details with our desk.</p></div></div>
-            <div class="col-6 col-md-4 col-lg-2"><div class="p-3 bg-white rounded-4 border h-100"><div class="category-icon-box mx-auto mb-2"><i data-lucide="user-check" width="22"></i></div><h6 class="fw-bold small">4. Verified Technician</h6><p class="small text-grey mb-0">KYC-approved specialist assigned.</p></div></div>
-            <div class="col-6 col-md-4 col-lg-2"><div class="p-3 bg-white rounded-4 border h-100"><div class="category-icon-box mx-auto mb-2"><i data-lucide="navigation" width="22"></i></div><h6 class="fw-bold small">5. Track Service</h6><p class="small text-grey mb-0">Follow live job status updates.</p></div></div>
-            <div class="col-6 col-md-4 col-lg-2"><div class="p-3 bg-white rounded-4 border h-100"><div class="category-icon-box mx-auto mb-2"><i data-lucide="check-circle-2" width="22"></i></div><h6 class="fw-bold small">6. Done &amp; Review</h6><p class="small text-grey mb-0">Pay securely &amp; rate your job.</p></div></div>
+            <div class="col-6 col-md-4 col-lg-2 reveal-up"><div class="clay-card p-3 h-100"><div class="clay-icon-badge mx-auto mb-2"><i data-lucide="search" width="22"></i></div><h6 class="fw-bold small">1. Choose Service</h6><p class="small text-grey mb-0">Pick your home or office service.</p></div></div>
+            <div class="col-6 col-md-4 col-lg-2 reveal-up"><div class="clay-card p-3 h-100"><div class="clay-icon-badge mx-auto mb-2"><i data-lucide="clipboard-list" width="22"></i></div><h6 class="fw-bold small">2. Submit Request</h6><p class="small text-grey mb-0">Enter address, date &amp; time slot.</p></div></div>
+            <div class="col-6 col-md-4 col-lg-2 reveal-up"><div class="clay-card p-3 h-100"><div class="clay-icon-badge mx-auto mb-2"><i data-lucide="message-circle" width="22"></i></div><h6 class="fw-bold small">3. Connect WhatsApp</h6><p class="small text-grey mb-0">Confirm details with our desk.</p></div></div>
+            <div class="col-6 col-md-4 col-lg-2 reveal-up"><div class="clay-card p-3 h-100"><div class="clay-icon-badge mx-auto mb-2"><i data-lucide="user-check" width="22"></i></div><h6 class="fw-bold small">4. Verified Tech</h6><p class="small text-grey mb-0">KYC-approved specialist assigned.</p></div></div>
+            <div class="col-6 col-md-4 col-lg-2 reveal-up"><div class="clay-card p-3 h-100"><div class="clay-icon-badge mx-auto mb-2"><i data-lucide="navigation" width="22"></i></div><h6 class="fw-bold small">5. Track Service</h6><p class="small text-grey mb-0">Follow live job status updates.</p></div></div>
+            <div class="col-6 col-md-4 col-lg-2 reveal-up"><div class="clay-card p-3 h-100"><div class="clay-icon-badge mx-auto mb-2"><i data-lucide="check-circle-2" width="22"></i></div><h6 class="fw-bold small">6. Done &amp; Review</h6><p class="small text-grey mb-0">Pay securely &amp; rate your job.</p></div></div>
         </div>
     </div>
 </section>
 
 <section class="py-5 bg-white border-top border-bottom" id="why-letsto">
     <div class="container">
-        <div class="row g-4 align-items-center">
-            <div class="col-lg-6">
-                <span class="text-orange fw-bold small text-uppercase">Why Choose LetsTo</span>
-                <h2 class="fw-bold text-navy mb-3">Skilled Professionals. Reliable Service. Better Living.</h2>
-                <div class="row g-3">
-                    <div class="col-6"><div class="p-3 rounded-3 bg-light h-100"><strong class="text-navy small d-block mb-1">Verified Technicians</strong><span class="small text-grey">Government ID &amp; skill-checked staff.</span></div></div>
-                    <div class="col-6"><div class="p-3 rounded-3 bg-light h-100"><strong class="text-navy small d-block mb-1">Transparent Pricing</strong><span class="small text-grey">Clear NPR estimates upfront.</span></div></div>
-                    <div class="col-6"><div class="p-3 rounded-3 bg-light h-100"><strong class="text-navy small d-block mb-1">Convenient Booking</strong><span class="small text-grey">Instant WhatsApp-first workflow.</span></div></div>
-                    <div class="col-6"><div class="p-3 rounded-3 bg-light h-100"><strong class="text-navy small d-block mb-1">Live Job Tracking</strong><span class="small text-grey">10-stage status timeline &amp; photos.</span></div></div>
+        <div class="bento-grid align-items-stretch">
+            <div class="bento-span-5 d-flex flex-column justify-content-between gap-3 reveal-up">
+                <div class="clay-card p-4 bg-soft-orange border-0">
+                    <span class="text-orange fw-bold small text-uppercase">Why Choose LetsTo</span>
+                    <h3 class="fw-bold text-navy mt-1 mb-2">Skilled Professionals. Reliable Service. Better Living.</h3>
+                    <p class="small text-grey mb-0">Built for Kathmandu Valley homes &amp; offices with strict KYC verification and transparent NPR pricing.</p>
+                </div>
+                <div class="row g-3 flex-grow-1">
+                    <div class="col-6"><div class="clay-card p-3 h-100"><div class="clay-icon-badge mb-2" style="width:44px;height:44px;"><i data-lucide="shield-check" width="20"></i></div><strong class="text-navy small d-block">Verified Techs</strong><span class="small text-grey">ID &amp; skill checked</span></div></div>
+                    <div class="col-6"><div class="clay-card p-3 h-100"><div class="clay-icon-badge mb-2" style="width:44px;height:44px;"><i data-lucide="banknote" width="20"></i></div><strong class="text-navy small d-block">Transparent NPR</strong><span class="small text-grey">No hidden fees</span></div></div>
+                    <div class="col-6"><div class="clay-card p-3 h-100"><div class="clay-icon-badge mb-2" style="width:44px;height:44px;"><i data-lucide="message-circle" width="20"></i></div><strong class="text-navy small d-block">WhatsApp First</strong><span class="small text-grey">Fast dispatch desk</span></div></div>
+                    <div class="col-6"><div class="clay-card p-3 h-100"><div class="clay-icon-badge mb-2" style="width:44px;height:44px;"><i data-lucide="activity" width="20"></i></div><strong class="text-navy small d-block">Live Tracking</strong><span class="small text-grey">10-stage timeline</span></div></div>
                 </div>
             </div>
-            <div class="col-lg-6">
-                <div class="p-3 rounded-4 border bg-light">
-                    <h6 class="fw-bold text-navy mb-2"><i data-lucide="map" width="17" class="text-orange"></i> Kathmandu Valley Coverage Map</h6>
-                    <div id="valleyMap" style="height:280px;border-radius:0.75rem;"></div>
+
+            <div class="bento-span-7 reveal-up">
+                <div class="clay-card p-3 p-md-4 h-100 d-flex flex-column">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                        <div>
+                            <h6 class="fw-bold text-navy mb-0"><i data-lucide="map-pin" width="17" class="text-orange"></i> Kathmandu Valley Coverage Map</h6>
+                            <span class="small text-grey">Click a hub to zoom across Kathmandu, Lalitpur &amp; Bhaktapur</span>
+                        </div>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn btn-navy map-hub-btn active" data-lat="27.6950" data-lng="85.3400" data-zoom="12">Full Valley</button>
+                            <button type="button" class="btn btn-outline-secondary map-hub-btn" data-lat="27.7172" data-lng="85.3240" data-zoom="13">Kathmandu</button>
+                            <button type="button" class="btn btn-outline-secondary map-hub-btn" data-lat="27.6644" data-lng="85.3188" data-zoom="13">Lalitpur</button>
+                            <button type="button" class="btn btn-outline-secondary map-hub-btn" data-lat="27.6710" data-lng="85.4298" data-zoom="13">Bhaktapur</button>
+                        </div>
+                    </div>
+                    <div id="valleyMap" class="flex-grow-1"></div>
                 </div>
             </div>
         </div>
@@ -205,14 +238,14 @@
 {% if verified_technicians %}
 <section class="py-5">
     <div class="container">
-        <div class="text-center mb-4">
+        <div class="text-center mb-4 reveal-up">
             <span class="text-orange fw-bold small text-uppercase">Trusted Professionals</span>
             <h2 class="fw-bold text-navy">Our Verified Technicians</h2>
         </div>
         <div class="row g-3 justify-content-center">
             {% for tech in verified_technicians %}
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="p-3 border rounded-4 text-center h-100 bg-white">
+            <div class="col-6 col-md-4 col-lg-2 reveal-up">
+                <div class="clay-card p-3 text-center h-100">
                     <div class="rounded-circle bg-navy text-white d-inline-flex align-items-center justify-content-center mb-2 fw-bold" style="width:54px;height:54px;">
                         {{ tech.full_legal_name|slice:":1"|upper }}
                     </div>
@@ -230,14 +263,14 @@
 {% if testimonials %}
 <section class="py-5 bg-white border-top">
     <div class="container">
-        <div class="text-center mb-4">
+        <div class="text-center mb-4 reveal-up">
             <span class="text-orange fw-bold small text-uppercase">Verified Customer Reviews</span>
             <h2 class="fw-bold text-navy">What Kathmandu Valley Customers Say</h2>
         </div>
         <div class="row g-4">
             {% for rev in testimonials %}
-            <div class="col-md-4">
-                <div class="p-4 bg-light rounded-4 border h-100">
+            <div class="col-md-4 reveal-up">
+                <div class="clay-card p-4 h-100">
                     <div class="text-orange mb-2">{% for i in "12345"|make_list %}{% if forloop.counter <= rev.service_rating %}★{% else %}☆{% endif %}{% endfor %}</div>
                     <p class="small mb-3">"{{ rev.comment }}"</p>
                     <div class="small fw-bold text-navy">{{ rev.customer.full_name }}</div>
@@ -252,7 +285,7 @@
 
 <section class="py-5" id="contact-cta">
     <div class="container">
-        <div class="p-4 p-md-5 rounded-4 bg-navy text-white text-center shadow">
+        <div class="p-4 p-md-5 rounded-4 bg-navy text-white text-center shadow-lg reveal-up">
             <span class="badge hero-badge rounded-pill px-3 py-2 mb-3">{{ website_settings.tagline }}</span>
             <h2 class="fw-bold mb-2">Your Home Deserves Professional Care.</h2>
             <p class="opacity-75 mb-4">Book Your Service with LetsTo Today — or join our growing network of verified technicians in Kathmandu Valley.</p>
@@ -268,19 +301,64 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const mapEl = document.getElementById('valleyMap');
-    if (mapEl && typeof L !== 'undefined') {
-        const map = L.map('valleyMap').setView([27.7000, 85.3333], 12);
+    if (!mapEl) return;
+
+    function initValleyMap() {
+        if (typeof L === 'undefined') {
+            mapEl.innerHTML = '<div class="d-flex flex-column align-items-center justify-content-center h-100 p-4 text-center"><strong class="text-navy mb-1">Kathmandu Valley Service Coverage</strong><span class="small text-grey">Active in Kathmandu (81 areas), Lalitpur (45 areas), and Bhaktapur (34 areas).</span></div>';
+            return;
+        }
+        const map = L.map('valleyMap', { scrollWheelZoom: false }).setView([27.6950, 85.3400], 12);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
-        [
-            { name: 'Kathmandu Service Hub', coords: [27.7172, 85.3240] },
-            { name: 'Lalitpur (Patan) Service Hub', coords: [27.6644, 85.3188] },
-            { name: 'Bhaktapur Service Hub', coords: [27.6710, 85.4298] }
-        ].forEach(hub => {
-            L.marker(hub.coords).addTo(map).bindPopup(`<strong>LetsTo</strong><br>${hub.name}`);
+
+        const hubs = [
+            { name: 'Kathmandu Central Hub (Thamel / Durbar Marg)', coords: [27.7172, 85.3240], color: '#092F5B', radius: 4200 },
+            { name: 'New Baneshwor & Koteshwor', coords: [27.6889, 85.3420], color: '#FF851B', radius: 2200 },
+            { name: 'Maharajgunj & Budhanilkantha', coords: [27.7400, 85.3350], color: '#092F5B', radius: 2200 },
+            { name: 'Kalanki & Kirtipur', coords: [27.6933, 85.2816], color: '#092F5B', radius: 2200 },
+            { name: 'Boudha & Jorpati', coords: [27.7215, 85.3620], color: '#FF851B', radius: 2000 },
+            { name: 'Lalitpur Hub (Pulchowk / Jhamsikhel / Patan)', coords: [27.6644, 85.3188], color: '#FF851B', radius: 3400 },
+            { name: 'Satdobato & Bhaisepati', coords: [27.6520, 85.3150], color: '#092F5B', radius: 2200 },
+            { name: 'Bhaktapur Hub (Suryabinayak / Durbar Square)', coords: [27.6710, 85.4298], color: '#FF851B', radius: 3200 },
+            { name: 'Madhyapur Thimi & Lokanthali', coords: [27.6780, 85.3820], color: '#092F5B', radius: 2000 }
+        ];
+
+        hubs.forEach(h => {
+            L.circle(h.coords, {
+                color: h.color,
+                fillColor: h.color,
+                fillOpacity: 0.12,
+                weight: 1.5,
+                radius: h.radius
+            }).addTo(map);
+            L.circleMarker(h.coords, {
+                radius: 7,
+                color: '#FFFFFF',
+                weight: 2,
+                fillColor: h.color,
+                fillOpacity: 1
+            }).addTo(map).bindPopup(`<strong style="color:#092F5B;">LetsTo Coverage</strong><br><span style="font-size:12px;">${h.name}</span>`);
         });
+
+        document.querySelectorAll('.map-hub-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.map-hub-btn').forEach(b => {
+                    b.classList.remove('btn-navy', 'active');
+                    b.classList.add('btn-outline-secondary');
+                });
+                btn.classList.remove('btn-outline-secondary');
+                btn.classList.add('btn-navy', 'active');
+                map.flyTo([parseFloat(btn.dataset.lat), parseFloat(btn.dataset.lng)], parseInt(btn.dataset.zoom, 10), { duration: 0.8 });
+            });
+        });
+
+        setTimeout(() => map.invalidateSize(), 300);
     }
+
+    initValleyMap();
 });
 </script>
 {% endblock %}
