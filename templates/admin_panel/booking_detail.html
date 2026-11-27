@@ -14,7 +14,12 @@
             <div class="row g-2 bg-light p-3 rounded-3 small mb-3">
                 <div class="col-md-6"><strong>Customer:</strong> {{ booking.customer_name }} ({{ booking.customer_phone }})</div>
                 <div class="col-md-6"><strong>Date/Time:</strong> {{ booking.preferred_date }} • {{ booking.preferred_time }}</div>
-                <div class="col-12"><strong>Address:</strong> {{ booking.address }}</div>
+                <div class="col-12">
+                    <strong>Address:</strong> {{ booking.address }}
+                    {% if booking.latitude and booking.longitude %}
+                    <a href="https://maps.google.com/?q={{ booking.latitude }},{{ booking.longitude }}" target="_blank" rel="noopener" class="badge bg-primary text-decoration-none ms-2">View GPS Pin ({{ booking.latitude }}, {{ booking.longitude }})</a>
+                    {% endif %}
+                </div>
                 <div class="col-12"><strong>Description:</strong> {{ booking.description }}</div>
             </div>
             <a href="{{ customer_wa_confirm }}" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm mb-4">Send WhatsApp Confirmation to Customer</a>

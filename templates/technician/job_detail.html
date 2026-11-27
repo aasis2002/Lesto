@@ -17,7 +17,19 @@
                 <div class="row g-3 bg-light p-3 rounded-3 small mb-4">
                     <div class="col-md-6"><strong>Customer:</strong> {{ booking.customer_name }} ({{ booking.customer_phone }})</div>
                     <div class="col-md-6"><strong>Schedule:</strong> {{ booking.preferred_date }} • {{ booking.preferred_time }}</div>
-                    <div class="col-12"><strong>Location:</strong> {{ booking.address }}</div>
+                    <div class="col-12">
+                        <strong>Location:</strong> {{ booking.address }}
+                        {% if booking.latitude and booking.longitude %}
+                        <a href="https://www.google.com/maps/dir/?api=1&destination={{ booking.latitude }},{{ booking.longitude }}" target="_blank" rel="noopener" class="btn btn-sm btn-navy ms-2 py-0 px-2">Navigate in Google Maps</a>
+                        {% else %}
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ booking.address|urlencode }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary ms-2 py-0 px-2">Open Address in Maps</a>
+                        {% endif %}
+                    </div>
+                    {% if booking.latitude and booking.longitude %}
+                    <div class="col-12">
+                        <div id="techJobMap" style="height:190px;border-radius:0.65rem;border:1px solid #CBD5E1;z-index:1;"></div>
+                    </div>
+                    {% endif %}
                     <div class="col-12"><strong>Problem Description:</strong> {{ booking.description }}</div>
                 </div>
 
@@ -90,4 +102,23 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block extra_js %}
+{% if booking.latitude and booking.longitude %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const el = document.getElementById('techJobMap');
+    if (el && typeof L !== 'undefined') {
+        const lat = {{ booking.latitude }};
+        const lng = {{ booking.longitude }};
+        const map = L.map('techJobMap', { scrollWheelZoom: false }).setView([lat, lng], 15);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            subdomains: 'abcd', maxZoom: 19, attribution: '&copy; OpenStreetMap &copy; CARTO'
+        }).addTo(map);
+        L.marker([lat, lng]).addTo(map).bindPopup('<strong>Customer Location</strong><br>{{ booking.address|escapejs }}').openPopup();
+        setTimeout(() => map.invalidateSize(), 250);
+    }
+});
+</script>
+{% endif %}
 {% endblock %}

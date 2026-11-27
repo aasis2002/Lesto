@@ -55,6 +55,14 @@ class WhatsAppBookingForm(forms.Form):
         required=False,
         widget=forms.FileInput(attrs={'class': 'form-control'})
     )
+    latitude = forms.DecimalField(
+        required=False, max_digits=9, decimal_places=6,
+        widget=forms.HiddenInput(attrs={'id': 'id_latitude'})
+    )
+    longitude = forms.DecimalField(
+        required=False, max_digits=9, decimal_places=6,
+        widget=forms.HiddenInput(attrs={'id': 'id_longitude'})
+    )
 
     def __init__(self, *args, service=None, **kwargs):
         super().__init__(*args, **kwargs)

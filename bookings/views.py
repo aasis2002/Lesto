@@ -63,6 +63,8 @@ def initiate_whatsapp_booking(request, service_slug):
             address=cd['address'],
             city=cd.get('city') or (cd['service_area'].city if cd.get('service_area') else ''),
             service_area=cd.get('service_area'),
+            latitude=cd.get('latitude'),
+            longitude=cd.get('longitude'),
             estimated_price=service.effective_price,
             final_price=service.effective_price,
             status=Booking.STATUS_WHATSAPP_INITIATED,
@@ -103,6 +105,8 @@ def initiate_whatsapp_booking(request, service_slug):
             preferred_time=booking.preferred_time,
             description=booking.description,
         )
+        if booking.latitude is not None and booking.longitude is not None:
+            message_text += f"\nLocation Pin: https://maps.google.com/?q={booking.latitude},{booking.longitude}"
         wa_number = biz.booking_whatsapp_number or biz.primary_whatsapp_number
         wa_url = build_whatsapp_url(wa_number, message_text)
         booking.whatsapp_redirect_url = wa_url

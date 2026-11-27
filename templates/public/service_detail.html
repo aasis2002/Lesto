@@ -136,6 +136,18 @@
                         <label class="form-label small fw-semibold">Complete Address *</label>
                         {{ booking_form.address }}
                     </div>
+                    {{ booking_form.latitude }}
+                    {{ booking_form.longitude }}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label class="form-label small fw-semibold mb-0">Pin Exact Location (For Technician)</label>
+                            <button type="button" id="detectGpsBtn" class="btn btn-outline-primary btn-sm py-0 px-2" style="font-size:0.75rem;">
+                                <i data-lucide="crosshair" width="13"></i> Use My GPS
+                            </button>
+                        </div>
+                        <div id="bookingPinMap" style="height:170px;border-radius:0.65rem;border:1px solid #CBD5E1;z-index:1;"></div>
+                        <div id="pinStatusText" class="small text-muted mt-1">Click on the map or tap "Use My GPS" to share your exact location.</div>
+                    </div>
                     <div class="row g-2 mb-3">
                         <div class="col-6">
                             <label class="form-label small fw-semibold">Preferred Date *</label>
@@ -227,6 +239,57 @@ document.addEventListener('DOMContentLoaded', () => {
             if (timeInput) timeInput.value = chip.dataset.time;
         });
     });
+
+    // Customer Location Pin Map
+    const pinMapEl = document.getElementById('bookingPinMap');
+    const latInput = document.getElementById('id_latitude');
+    const lngInput = document.getElementById('id_longitude');
+    const pinStatus = document.getElementById('pinStatusText');
+    const gpsBtn = document.getElementById('detectGpsBtn');
+
+    if (pinMapEl && typeof L !== 'undefined') {
+        const pinMap = L.map('bookingPinMap', { scrollWheelZoom: false }).setView([27.7000, 85.3333], 12);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            subdomains: 'abcd',
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap &copy; CARTO'
+        }).addTo(pinMap);
+
+        let marker = null;
+        function setPin(lat, lng, label) {
+            const latFixed = Number(lat).toFixed(6);
+            const lngFixed = Number(lng).toFixed(6);
+            latInput.value = latFixed;
+            lngInput.value = lngFixed;
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng], { draggable: true }).addTo(pinMap);
+                marker.on('dragend', () => {
+                    const pos = marker.getLatLng();
+                    setPin(pos.lat, pos.lng, 'Pinned location');
+                });
+            }
+            pinMap.setView([lat, lng], 15);
+            pinStatus.innerHTML = `<span class="text-success fw-semibold">${label}:</span> ${latFixed}, ${lngFixed} (<a href="https://maps.google.com/?q=${latFixed},${lngFixed}" target="_blank" rel="noopener">Preview</a>)`;
+        }
+
+        pinMap.on('click', (e) => setPin(e.latlng.lat, e.latlng.lng, 'Pinned location'));
+
+        gpsBtn?.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                pinStatus.textContent = 'Geolocation is not supported by your browser. Please click on the map.';
+                return;
+            }
+            pinStatus.textContent = 'Detecting your GPS location...';
+            navigator.geolocation.getCurrentPosition(
+                (pos) => setPin(pos.coords.latitude, pos.coords.longitude, 'GPS location locked'),
+                () => { pinStatus.textContent = 'Unable to get GPS permission. Please click directly on the map.'; },
+                { enableHighAccuracy: true, timeout: 8000 }
+            );
+        });
+        setTimeout(() => pinMap.invalidateSize(), 300);
+    }
 });
 </script>
 {% endblock %}
