@@ -27,4 +27,6 @@ urlpatterns = [
     path('technician/jobs/<str:enquiry_id>/photo/', views.technician_upload_photo, name='technician_upload_photo'),
     path('technician/profile/', views.technician_profile_view, name='technician_profile'),
     path('technician/earnings/', views.technician_earnings, name='technician_earnings'),
+    path('technician/id-card/', views.technician_id_card, name='technician_id_card'),
+    path('booking/<str:enquiry_id>/invoice/', views.booking_invoice, name='booking_invoice'),
 ]

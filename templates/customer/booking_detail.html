@@ -69,12 +69,13 @@
         </div>
 
         <div class="col-lg-4">
-            {% if booking.whatsapp_redirect_url %}
             <div class="bg-white p-4 rounded-4 border shadow-sm mb-3">
-                <h6 class="fw-bold text-navy mb-2">WhatsApp Support</h6>
+                <h6 class="fw-bold text-navy mb-2">Invoice &amp; Support</h6>
+                <a href="{% url 'bookings:booking_invoice' booking.enquiry_id %}" class="btn btn-navy w-100 btn-sm mb-2">View / Print Invoice</a>
+                {% if booking.whatsapp_redirect_url %}
                 <a href="{{ booking.whatsapp_redirect_url }}" target="_blank" rel="noopener" class="btn btn-whatsapp w-100 btn-sm">Open Booking WhatsApp Chat</a>
+                {% endif %}
             </div>
-            {% endif %}
 
             {% if can_cancel %}
             <div class="bg-white p-4 rounded-4 border shadow-sm mb-3">

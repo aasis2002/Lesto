@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Invoice {{ booking.enquiry_id }} — {{ website_settings.website_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-3 d-print-none">
+                <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">&larr; Back</a>
+                <button onclick="window.print()" class="btn btn-navy btn-sm">Print / Save PDF</button>
+            </div>
+            <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 border-bottom pb-4 mb-4">
+                    <div>
+                        <img src="{% static 'images/letsto-logo.jpg' %}" alt="LetsTo" height="52" style="width:auto;object-fit:contain;" class="mb-2">
+                        <div class="small text-muted">{{ website_settings.sub_tagline }}</div>
+                        <div class="small text-muted">{{ website_settings.business_address }} • {{ website_settings.contact_phone }}</div>
+                    </div>
+                    <div class="text-md-end">
+                        <h4 class="fw-bold text-navy mb-1">SERVICE INVOICE</h4>
+                        <div class="small"><strong>Booking ID:</strong> {{ booking.enquiry_id }}</div>
+                        <div class="small"><strong>Date:</strong> {{ booking.preferred_date }}</div>
+                        <div class="small"><strong>Payment Status:</strong> <span class="badge bg-navy">{{ booking.get_payment_status_display }}</span></div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4 small">
+                    <div class="col-md-6">
+                        <strong class="text-navy d-block">Billed To:</strong>
+                        <div>{{ booking.customer_name }}</div>
+                        <div>{{ booking.customer_phone }}</div>
+                        <div>{{ booking.address }}</div>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <strong class="text-navy d-block">Service Details:</strong>
+                        <div>{{ booking.service_name_snapshot }}</div>
+                        <div>Category: {{ booking.category.name }}</div>
+                        {% if booking.assigned_technician %}<div>Technician: {{ booking.assigned_technician.full_name }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <table class="table table-bordered small mb-4">
+                    <thead class="table-light">
+                        <tr><th>Description</th><th class="text-end">Amount ({{ business_settings.currency_code }})</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Base Service Charge ({{ booking.service_name_snapshot }})</td><td class="text-end">{{ business_settings.currency_symbol }}{{ booking.estimated_price }}</td></tr>
+                        {% if booking.additional_charges > 0 %}<tr><td>Additional Service Charges</td><td class="text-end">{{ business_settings.currency_symbol }}{{ booking.additional_charges }}</td></tr>{% endif %}
+                        {% if booking.material_charges > 0 %}<tr><td>Material Charges</td><td class="text-end">{{ business_settings.currency_symbol }}{{ booking.material_charges }}</td></tr>{% endif %}
+                        {% if booking.emergency_charges > 0 %}<tr><td>Emergency Visit Charges</td><td class="text-end">{{ business_settings.currency_symbol }}{{ booking.emergency_charges }}</td></tr>{% endif %}
+                        {% if booking.discount_amount > 0 %}<tr><td>Discount</td><td class="text-end text-success">-{{ business_settings.currency_symbol }}{{ booking.discount_amount }}</td></tr>{% endif %}
+                        {% if booking.tax_amount > 0 %}<tr><td>Tax</td><td class="text-end">{{ business_settings.currency_symbol }}{{ booking.tax_amount }}</td></tr>{% endif %}
+                        <tr class="table-light fw-bold"><td>Total Payable</td><td class="text-end text-navy">{{ business_settings.currency_symbol }}{{ booking.final_price }}</td></tr>
+                    </tbody>
+                </table>
+                <div class="text-center small text-muted border-top pt-3">
+                    {{ website_settings.website_name }} — {{ website_settings.tagline }} | {{ website_settings.contact_email }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

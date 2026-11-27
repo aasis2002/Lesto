@@ -4,35 +4,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ website_settings.description }}">
     <title>{% block title %}{{ website_settings.website_name }} — {{ website_settings.tagline }}{% endblock %}</title>
+    {% if website_settings.favicon %}
+    <link rel="icon" href="{{ website_settings.favicon.url }}">
+    {% else %}
+    <link rel="icon" type="image/jpeg" href="{% static 'images/letsto-logo.jpg' %}">
+    {% endif %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <link rel="stylesheet" href="{% static 'css/letsto.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+<div class="announcement-bar py-2">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2">
+            <i data-lucide="map-pin" width="14" class="text-orange"></i>
+            <span>Serving <strong>Kathmandu Valley</strong> (Kathmandu • Lalitpur • Bhaktapur)</span>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <span class="d-none d-md-inline"><i data-lucide="clock" width="13"></i> {{ business_settings.working_hours }}</span>
+            <a href="https://wa.me/{{ business_settings.support_whatsapp_number }}" target="_blank" rel="noopener" class="text-white text-decoration-none fw-semibold">
+                <i data-lucide="message-circle" width="14" class="text-orange"></i> {{ website_settings.contact_phone }}
+            </a>
+        </div>
+    </div>
+</div>
+
 <nav class="navbar navbar-expand-lg navbar-letsto sticky-top">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-navy" href="{% url 'services:home' %}">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'services:home' %}">
             {% if website_settings.logo %}
-                <img src="{{ website_settings.logo.url }}" alt="{{ website_settings.website_name }}" height="42" class="rounded">
+                <img src="{{ website_settings.logo.url }}" alt="{{ website_settings.website_name }}" class="brand-logo-img rounded">
             {% else %}
-                <img src="{% static 'images/letsto-logo.jpg' %}" alt="LetsTo" height="42" class="rounded">
+                <img src="{% static 'images/letsto-logo.jpg' %}" alt="LetsTo — Book • Connect • Get It Done" class="brand-logo-img rounded">
             {% endif %}
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="mainNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-lg-2">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-lg-1">
                 <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'services:home' %}">Home</a></li>
                 <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'services:service_list' %}">Services</a></li>
-                <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'bookings:track_booking_public' %}">Track Booking</a></li>
-                {% if not user.is_authenticated %}
-                <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'core:register_technician' %}">Join as Technician</a></li>
-                {% endif %}
+                <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'services:home' %}#how-it-works">How It Works</a></li>
+                <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'services:home' %}#why-letsto">About Us</a></li>
+                <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'bookings:track_booking_public' %}">Track</a></li>
+                <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'services:home' %}#contact-cta">Contact</a></li>
             </ul>
             <div class="d-flex align-items-center gap-2 flex-wrap">
                 {% if user.is_authenticated %}
@@ -57,6 +79,7 @@
                             <li><a class="dropdown-item" href="{% url 'bookings:customer_payments' %}">Payments</a></li>
                             {% elif user.is_technician %}
                             <li><a class="dropdown-item" href="{% url 'bookings:technician_earnings' %}">Earnings &amp; Payouts</a></li>
+                            <li><a class="dropdown-item" href="{% url 'bookings:technician_id_card' %}">Digital ID Card</a></li>
                             <li><a class="dropdown-item" href="{% url 'bookings:technician_profile' %}">Profile &amp; Availability</a></li>
                             {% endif %}
                             <li><a class="dropdown-item" href="{% url 'core:upload_kyc' %}">KYC Verification</a></li>
@@ -66,8 +89,9 @@
                     </div>
                 {% else %}
                     <a href="{% url 'core:login' %}" class="btn btn-outline-secondary btn-sm px-3">Login</a>
-                    <a href="{% url 'core:register_customer' %}" class="btn btn-orange btn-sm px-3">Sign Up</a>
+                    <a href="{% url 'core:register_customer' %}" class="btn btn-outline-primary btn-sm px-3">Register</a>
                 {% endif %}
+                <a href="{% url 'services:service_list' %}" class="btn btn-orange btn-sm px-3">Book a Service</a>
             </div>
         </div>
     </div>
@@ -88,39 +112,44 @@
     {% block content %}{% endblock %}
 </main>
 
-<footer class="bg-navy text-light pt-5 pb-4 mt-5">
+<footer class="bg-dark-navy text-light pt-5 pb-4 mt-5">
     <div class="container">
         <div class="row g-4">
             <div class="col-lg-4">
-                <img src="{% static 'images/letsto-logo.jpg' %}" alt="LetsTo" height="48" class="rounded bg-white p-1 mb-3">
+                <img src="{% static 'images/letsto-logo.jpg' %}" alt="LetsTo" height="48" class="rounded bg-white p-1 mb-3" style="width:auto;object-fit:contain;">
+                <p class="small fw-semibold text-orange mb-1">{{ website_settings.sub_tagline }}</p>
                 <p class="small text-light opacity-75">{{ website_settings.description }}</p>
                 <p class="small mb-1"><i data-lucide="map-pin" style="width:14px;height:14px;"></i> {{ website_settings.business_address }}</p>
                 <p class="small mb-1"><i data-lucide="phone" style="width:14px;height:14px;"></i> {{ website_settings.contact_phone }}</p>
                 <p class="small mb-0"><i data-lucide="mail" style="width:14px;height:14px;"></i> {{ website_settings.contact_email }}</p>
             </div>
             <div class="col-6 col-lg-2">
-                <h6 class="fw-bold text-orange mb-3">Services</h6>
+                <h6 class="fw-bold text-orange mb-3">Categories</h6>
                 <ul class="list-unstyled small d-flex flex-column gap-2">
-                    {% for cat in global_categories|slice:":5" %}
+                    {% for cat in global_categories|slice:":6" %}
                     <li><a href="{% url 'services:service_list' %}?category={{ cat.slug }}" class="text-light text-decoration-none opacity-75">{{ cat.name }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
             <div class="col-6 col-lg-3">
-                <h6 class="fw-bold text-orange mb-3">Quick Links</h6>
+                <h6 class="fw-bold text-orange mb-3">Service Areas &amp; Links</h6>
                 <ul class="list-unstyled small d-flex flex-column gap-2">
+                    <li><a href="{% url 'services:service_list' %}?q=Kathmandu" class="text-light text-decoration-none opacity-75">Kathmandu Services</a></li>
+                    <li><a href="{% url 'services:service_list' %}?q=Lalitpur" class="text-light text-decoration-none opacity-75">Lalitpur Services</a></li>
+                    <li><a href="{% url 'services:service_list' %}?q=Bhaktapur" class="text-light text-decoration-none opacity-75">Bhaktapur Services</a></li>
                     <li><a href="{% url 'bookings:track_booking_public' %}" class="text-light text-decoration-none opacity-75">Track Your Booking</a></li>
-                    <li><a href="{% url 'core:register_customer' %}" class="text-light text-decoration-none opacity-75">Customer Registration</a></li>
-                    <li><a href="{% url 'core:register_technician' %}" class="text-light text-decoration-none opacity-75">Become a Technician</a></li>
-                    <li><a href="{% url 'core:login' %}" class="text-light text-decoration-none opacity-75">Portal Login</a></li>
+                    <li><a href="{% url 'core:register_technician' %}" class="text-light text-decoration-none opacity-75">Join as Technician</a></li>
                 </ul>
             </div>
             <div class="col-lg-3">
-                <h6 class="fw-bold text-orange mb-3">Support Hours</h6>
-                <p class="small opacity-75 mb-2">{{ business_settings.working_hours }}</p>
-                <a href="https://wa.me/{{ business_settings.support_whatsapp_number }}" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">
+                <h6 class="fw-bold text-orange mb-3">Customer Support</h6>
+                <p class="small opacity-75 mb-2">{{ business_settings.working_hours }} (NPT)</p>
+                <a href="https://wa.me/{{ business_settings.support_whatsapp_number }}" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm mb-3">
                     <i data-lucide="message-circle" style="width:16px;height:16px;"></i> Chat on WhatsApp
                 </a>
+                <div class="small opacity-75">
+                    <span class="d-block">Currency: Nepalese Rupees (NPR / रु)</span>
+                </div>
             </div>
         </div>
         <hr class="border-secondary my-4">
@@ -131,7 +160,7 @@
     </div>
 </footer>
 
-<a href="https://wa.me/{{ business_settings.support_whatsapp_number }}?text=Hello%20LetsTo%20Support%2C%20I%20need%20help%20with%20a%20home%20service."
+<a href="https://wa.me/{{ business_settings.support_whatsapp_number }}?text=Hello%20LetsTo%20Support%2C%20I%20need%20help%20with%20a%20home%20service%20in%20Kathmandu%20Valley."
    target="_blank" rel="noopener" class="floating-whatsapp" title="WhatsApp Support">
     <i data-lucide="message-circle" style="width:22px;height:22px;"></i>
     <span>WhatsApp Support</span>

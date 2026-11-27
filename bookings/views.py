@@ -544,3 +544,24 @@ def technician_earnings(request):
         'total_paid': total_paid,
         'pending_balance': total_earned - total_paid,
     })
+
+
+@login_required
+def booking_invoice(request, enquiry_id):
+    booking = get_object_or_404(
+        Booking.objects.select_related('category', 'service', 'assigned_technician'),
+        enquiry_id=enquiry_id,
+    )
+    if not (
+        request.user.is_admin_user
+        or booking.customer_id == request.user.id
+        or booking.assigned_technician_id == request.user.id
+    ):
+        from django.core.exceptions import PermissionDenied
+        raise PermissionDenied('You cannot view this invoice.')
+    return render(request, 'bookings/invoice.html', {'booking': booking})
+
+
+@role_required(User.ROLE_TECHNICIAN)
+def technician_id_card(request):
+    return render(request, 'technician/id_card.html', {'profile': request.user.technician_profile})

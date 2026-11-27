@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Login — {{ website_settings.website_name }}{% endblock %}
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-5">
             <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm">
-                <h3 class="fw-bold text-navy mb-1">Welcome Back</h3>
-                <p class="small text-muted mb-4">Sign in to your LetsTo Customer, Technician, or Admin account.</p>
+                <div class="text-center mb-4">
+                    <img src="{% static 'images/letsto-logo.jpg' %}" alt="LetsTo" height="54" class="mb-2" style="width:auto;object-fit:contain;">
+                    <h4 class="fw-bold text-navy mb-1">Welcome Back</h4>
+                    <p class="small text-muted mb-0">Sign in to your LetsTo Customer, Technician, or Admin account.</p>
+                </div>
                 <form method="post">
                     {% csrf_token %}
                     <div class="mb-3">

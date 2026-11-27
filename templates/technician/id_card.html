@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Technician Digital ID Card — {{ website_settings.website_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="d-flex justify-content-between align-items-center mb-3 d-print-none">
+                <a href="{% url 'bookings:technician_dashboard' %}" class="btn btn-outline-secondary btn-sm">&larr; Dashboard</a>
+                <button onclick="window.print()" class="btn btn-navy btn-sm">Print ID Card</button>
+            </div>
+            <div class="bg-white rounded-4 border shadow overflow-hidden">
+                <div class="bg-navy text-white p-3 text-center">
+                    <img src="{% static 'images/letsto-logo.jpg' %}" alt="LetsTo" height="40" class="rounded bg-white p-1 mb-2" style="width:auto;object-fit:contain;">
+                    <div class="small fw-semibold text-orange">OFFICIAL TECHNICIAN ID CARD</div>
+                </div>
+                <div class="p-4 text-center">
+                    {% if user.profile_photo %}
+                    <img src="{{ user.profile_photo.url }}" class="rounded-circle border mb-3 object-fit-cover" width="96" height="96" alt="{{ profile.full_legal_name }}">
+                    {% else %}
+                    <div class="rounded-circle bg-navy text-white d-inline-flex align-items-center justify-content-center mb-3 fw-bold fs-2" style="width:96px;height:96px;">
+                        {{ profile.full_legal_name|slice:":1"|upper }}
+                    </div>
+                    {% endif %}
+                    <h4 class="fw-bold text-navy mb-1">{{ profile.full_legal_name }}</h4>
+                    <span class="badge {% if profile.is_verified %}bg-success{% else %}bg-warning text-dark{% endif %} mb-3">
+                        {% if profile.is_verified %}KYC Verified Technician{% else %}{{ profile.get_verification_status_display }}{% endif %}
+                    </span>
+                    <div class="text-start small bg-light p-3 rounded-3">
+                        <div><strong>Technician ID:</strong> LT-TECH-{{ user.id|stringformat:"04d" }}</div>
+                        <div><strong>Phone:</strong> {{ user.phone }}</div>
+                        <div><strong>Experience:</strong> {{ profile.experience_years }} Years</div>
+                        <div><strong>Categories:</strong> {% for c in profile.service_categories.all %}{{ c.name }}{% if not forloop.last %}, {% endif %}{% empty %}General{% endfor %}</div>
+                    </div>
+                </div>
+                <div class="bg-dark-navy text-white text-center py-2 small">
+                    {{ website_settings.website_name }} • {{ website_settings.business_address }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
