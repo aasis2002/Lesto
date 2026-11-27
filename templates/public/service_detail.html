@@ -53,11 +53,30 @@
                 {% endif %}
 
                 {% if service.service_areas.exists %}
-                <h5 class="fw-bold text-navy mt-4">Available Locations</h5>
-                <div class="d-flex flex-wrap gap-2">
-                    {% for area in service.service_areas.all %}
-                    <span class="badge bg-light text-dark border">{{ area.name }}, {{ area.city }}</span>
-                    {% endfor %}
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-4 mb-2">
+                    <h5 class="fw-bold text-navy mb-0">Available Locations</h5>
+                    <span class="badge bg-soft-orange text-navy">{{ service.service_areas.count }} Areas</span>
+                </div>
+                <div class="p-3 bg-light rounded-3 border">
+                    <div class="row g-2 mb-2 align-items-center">
+                        <div class="col-sm-6">
+                            <input type="text" id="locSearchInput" class="form-control form-control-sm" placeholder="Search area or city (e.g. Baneshwor, Patan)...">
+                        </div>
+                        <div class="col-sm-6 d-flex flex-wrap gap-1">
+                            <button type="button" class="btn btn-sm btn-navy loc-city-btn active" data-city="all" style="font-size:0.75rem;padding:2px 8px;">All</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary loc-city-btn" data-city="Kathmandu" style="font-size:0.75rem;padding:2px 8px;">Kathmandu</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary loc-city-btn" data-city="Lalitpur" style="font-size:0.75rem;padding:2px 8px;">Lalitpur</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary loc-city-btn" data-city="Bhaktapur" style="font-size:0.75rem;padding:2px 8px;">Bhaktapur</button>
+                        </div>
+                    </div>
+                    <div id="locBadgesWrap" class="d-flex flex-wrap gap-2" style="max-height:175px;overflow-y:auto;">
+                        {% for area in service.service_areas.all %}
+                        <button type="button" class="badge bg-white text-dark border loc-badge-item text-decoration-none" data-area-id="{{ area.id }}" data-city="{{ area.city }}" style="cursor:pointer;font-weight:500;">
+                            {{ area.name }}, {{ area.city }}
+                        </button>
+                        {% endfor %}
+                    </div>
+                    <div id="noLocMatch" class="small text-muted text-center py-2 d-none">No matching service location found.</div>
                 </div>
                 {% endif %}
             </div>
@@ -125,6 +144,13 @@
                         <div class="col-6">
                             <label class="form-label small fw-semibold">Preferred Time *</label>
                             {{ booking_form.preferred_time }}
+                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                <button type="button" class="badge bg-light text-navy border time-chip" data-time="09:00 AM" style="cursor:pointer;">9:00 AM</button>
+                                <button type="button" class="badge bg-light text-navy border time-chip" data-time="11:00 AM" style="cursor:pointer;">11:00 AM</button>
+                                <button type="button" class="badge bg-light text-navy border time-chip" data-time="02:00 PM" style="cursor:pointer;">2:00 PM</button>
+                                <button type="button" class="badge bg-light text-navy border time-chip" data-time="04:00 PM" style="cursor:pointer;">4:00 PM</button>
+                                <button type="button" class="badge bg-soft-orange text-navy border time-chip" data-time="Emergency / ASAP" style="cursor:pointer;">ASAP</button>
+                            </div>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -144,4 +170,63 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const locSearch = document.getElementById('locSearchInput');
+    const locItems = Array.from(document.querySelectorAll('.loc-badge-item'));
+    const noLoc = document.getElementById('noLocMatch');
+    const areaSelect = document.getElementById('id_service_area');
+    let activeCity = 'all';
+
+    function filterLocations() {
+        if (!locSearch) return;
+        const q = locSearch.value.trim().toLowerCase();
+        let shown = 0;
+        locItems.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            const cityMatch = activeCity === 'all' || (item.dataset.city || '').toLowerCase() === activeCity.toLowerCase();
+            const qMatch = !q || text.includes(q);
+            if (cityMatch && qMatch) {
+                item.style.display = '';
+                shown++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        if (noLoc) noLoc.classList.toggle('d-none', shown > 0);
+    }
+
+    locSearch?.addEventListener('input', filterLocations);
+    document.querySelectorAll('.loc-city-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.loc-city-btn').forEach(b => {
+                b.classList.remove('btn-navy', 'active');
+                b.classList.add('btn-outline-secondary');
+            });
+            btn.classList.remove('btn-outline-secondary');
+            btn.classList.add('btn-navy', 'active');
+            activeCity = btn.dataset.city;
+            filterLocations();
+        });
+    });
+
+    locItems.forEach(badge => {
+        badge.addEventListener('click', () => {
+            if (areaSelect) {
+                areaSelect.value = badge.dataset.areaId;
+                areaSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    });
+
+    const timeInput = document.getElementById('id_preferred_time');
+    document.querySelectorAll('.time-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            if (timeInput) timeInput.value = chip.dataset.time;
+        });
+    });
+});
+</script>
 {% endblock %}

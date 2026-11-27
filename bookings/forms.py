@@ -40,16 +40,13 @@ class WhatsAppBookingForm(forms.Form):
         initial=timezone.localdate,
         widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
     )
-    preferred_time = forms.ChoiceField(
-        choices=[
-            ('08:00 AM - 10:00 AM', '08:00 AM - 10:00 AM'),
-            ('10:00 AM - 12:00 PM', '10:00 AM - 12:00 PM'),
-            ('12:00 PM - 02:00 PM', '12:00 PM - 02:00 PM'),
-            ('02:00 PM - 04:00 PM', '02:00 PM - 04:00 PM'),
-            ('04:00 PM - 06:00 PM', '04:00 PM - 06:00 PM'),
-            ('Emergency / ASAP', 'Emergency / ASAP'),
-        ],
-        widget=forms.Select(attrs={'class': 'form-select'})
+    preferred_time = forms.CharField(
+        max_length=40,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'e.g. 10:30 AM or Morning',
+            'id': 'id_preferred_time',
+        })
     )
     description = forms.CharField(
         widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Describe the issue or specific requirements...'})
