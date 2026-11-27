@@ -16,7 +16,9 @@
                 <div class="col-md-6"><strong>Date/Time:</strong> {{ booking.preferred_date }} • {{ booking.preferred_time }}</div>
                 <div class="col-12">
                     <strong>Address:</strong> {{ booking.address }}
-                    {% if booking.latitude and booking.longitude %}
+                    {% if booking.location_link %}
+                    <a href="{{ booking.location_link }}" target="_blank" rel="noopener" class="badge bg-primary text-decoration-none ms-2">Open Shared Location Link</a>
+                    {% elif booking.latitude and booking.longitude %}
                     <a href="https://maps.google.com/?q={{ booking.latitude }},{{ booking.longitude }}" target="_blank" rel="noopener" class="badge bg-primary text-decoration-none ms-2">View GPS Pin ({{ booking.latitude }}, {{ booking.longitude }})</a>
                     {% endif %}
                 </div>

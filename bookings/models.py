@@ -72,6 +72,7 @@ class Booking(models.Model):
     address = models.TextField()
     city = models.CharField(max_length=80, blank=True)
     service_area = models.ForeignKey('services.ServiceArea', on_delete=models.SET_NULL, null=True, blank=True)
+    location_link = models.URLField(max_length=500, blank=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 

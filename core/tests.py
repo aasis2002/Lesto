@@ -52,6 +52,7 @@ class LetsToPlatformTests(TestCase):
                 'preferred_date': timezone.localdate().isoformat(),
                 'preferred_time': '10:00 AM - 12:00 PM',
                 'description': '3-seater fabric sofa cleaning',
+                'location_link': 'https://maps.google.com/?q=27.717200,85.324000',
                 'latitude': '27.717200',
                 'longitude': '85.324000',
             },
@@ -61,6 +62,7 @@ class LetsToPlatformTests(TestCase):
         self.assertTrue(booking.enquiry_id.startswith('LT-'))
         self.assertEqual(booking.status, Booking.STATUS_WHATSAPP_INITIATED)
         self.assertIn('https://wa.me/', booking.whatsapp_redirect_url)
+        self.assertEqual(booking.location_link, 'https://maps.google.com/?q=27.717200,85.324000')
         self.assertEqual(booking.latitude, Decimal('27.717200'))
         self.assertEqual(booking.longitude, Decimal('85.324000'))
         self.assertIn('27.717200', booking.whatsapp_redirect_url)

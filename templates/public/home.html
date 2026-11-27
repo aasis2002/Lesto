@@ -215,20 +215,52 @@
             </div>
 
             <div class="bento-span-7 reveal-up">
-                <div class="clay-card p-3 p-md-4 h-100 d-flex flex-column">
+                <div class="clay-card p-4 h-100 d-flex flex-column justify-content-between">
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                         <div>
-                            <h6 class="fw-bold text-navy mb-0"><i data-lucide="map-pin" width="17" class="text-orange"></i> Kathmandu Valley Coverage Map</h6>
-                            <span class="small text-grey">Click a hub to zoom across Kathmandu, Lalitpur &amp; Bhaktapur</span>
+                            <span class="text-orange fw-bold small text-uppercase">Service Coverage</span>
+                            <h5 class="fw-bold text-navy mb-0"><i data-lucide="map-pin" width="18" class="text-orange"></i> Kathmandu Valley Dispatch Hubs</h5>
                         </div>
-                        <div class="btn-group btn-group-sm" role="group">
-                            <button type="button" class="btn btn-navy map-hub-btn active" data-lat="27.6950" data-lng="85.3400" data-zoom="12">Full Valley</button>
-                            <button type="button" class="btn btn-outline-secondary map-hub-btn" data-lat="27.7172" data-lng="85.3240" data-zoom="13">Kathmandu</button>
-                            <button type="button" class="btn btn-outline-secondary map-hub-btn" data-lat="27.6644" data-lng="85.3188" data-zoom="13">Lalitpur</button>
-                            <button type="button" class="btn btn-outline-secondary map-hub-btn" data-lat="27.6710" data-lng="85.4298" data-zoom="13">Bhaktapur</button>
+                        <span class="badge bg-success-subtle text-success px-3 py-2">Active 7 Days • Same-Day Dispatch</span>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-4 bg-light border h-100">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <strong class="text-navy">Kathmandu</strong>
+                                    <span class="badge bg-navy">81 Areas</span>
+                                </div>
+                                <p class="small text-grey mb-2">Thamel, New Baneshwor, Maharajgunj, Baluwatar, Koteshwor, Kalanki, Boudha, Kirtipur &amp; more.</p>
+                                <a href="{% url 'services:service_list' %}?q=Kathmandu" class="small fw-semibold text-orange text-decoration-none">Browse Services &rarr;</a>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-4 bg-light border h-100">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <strong class="text-navy">Lalitpur</strong>
+                                    <span class="badge bg-orange text-white">45 Areas</span>
+                                </div>
+                                <p class="small text-grey mb-2">Pulchowk, Jhamsikhel, Jawalakhel, Sanepa, Lagankhel, Satdobato, Imadol, Bhaisepati &amp; more.</p>
+                                <a href="{% url 'services:service_list' %}?q=Lalitpur" class="small fw-semibold text-orange text-decoration-none">Browse Services &rarr;</a>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-4 bg-light border h-100">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <strong class="text-navy">Bhaktapur</strong>
+                                    <span class="badge bg-navy">34 Areas</span>
+                                </div>
+                                <p class="small text-grey mb-2">Suryabinayak, Madhyapur Thimi, Lokanthali, Kaushaltar, Gatthaghar, Sallaghari, Durbar Sq. &amp; more.</p>
+                                <a href="{% url 'services:service_list' %}?q=Bhaktapur" class="small fw-semibold text-orange text-decoration-none">Browse Services &rarr;</a>
+                            </div>
                         </div>
                     </div>
-                    <div id="valleyMap" class="flex-grow-1"></div>
+
+                    <div class="p-3 rounded-3 bg-navy text-white d-flex flex-wrap justify-content-between align-items-center gap-2 small">
+                        <span><i data-lucide="navigation" width="15" class="text-orange"></i> Customers can share their Google Maps / GPS link directly during booking for fast technician arrival.</span>
+                        <a href="{% url 'services:service_list' %}" class="btn btn-orange btn-sm">Check Your Area</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -296,70 +328,4 @@
         </div>
     </div>
 </section>
-{% endblock %}
-{% block extra_js %}
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const mapEl = document.getElementById('valleyMap');
-    if (!mapEl) return;
-
-    function initValleyMap() {
-        if (typeof L === 'undefined') {
-            mapEl.innerHTML = '<div class="d-flex flex-column align-items-center justify-content-center h-100 p-4 text-center"><strong class="text-navy mb-1">Kathmandu Valley Service Coverage</strong><span class="small text-grey">Active in Kathmandu (81 areas), Lalitpur (45 areas), and Bhaktapur (34 areas).</span></div>';
-            return;
-        }
-        const map = L.map('valleyMap', { scrollWheelZoom: false }).setView([27.6950, 85.3400], 12);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            subdomains: 'abcd',
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap &copy; CARTO'
-        }).addTo(map);
-
-        const hubs = [
-            { name: 'Kathmandu Central Hub (Thamel / Durbar Marg)', coords: [27.7172, 85.3240], color: '#092F5B', radius: 4200 },
-            { name: 'New Baneshwor & Koteshwor', coords: [27.6889, 85.3420], color: '#FF851B', radius: 2200 },
-            { name: 'Maharajgunj & Budhanilkantha', coords: [27.7400, 85.3350], color: '#092F5B', radius: 2200 },
-            { name: 'Kalanki & Kirtipur', coords: [27.6933, 85.2816], color: '#092F5B', radius: 2200 },
-            { name: 'Boudha & Jorpati', coords: [27.7215, 85.3620], color: '#FF851B', radius: 2000 },
-            { name: 'Lalitpur Hub (Pulchowk / Jhamsikhel / Patan)', coords: [27.6644, 85.3188], color: '#FF851B', radius: 3400 },
-            { name: 'Satdobato & Bhaisepati', coords: [27.6520, 85.3150], color: '#092F5B', radius: 2200 },
-            { name: 'Bhaktapur Hub (Suryabinayak / Durbar Square)', coords: [27.6710, 85.4298], color: '#FF851B', radius: 3200 },
-            { name: 'Madhyapur Thimi & Lokanthali', coords: [27.6780, 85.3820], color: '#092F5B', radius: 2000 }
-        ];
-
-        hubs.forEach(h => {
-            L.circle(h.coords, {
-                color: h.color,
-                fillColor: h.color,
-                fillOpacity: 0.12,
-                weight: 1.5,
-                radius: h.radius
-            }).addTo(map);
-            L.circleMarker(h.coords, {
-                radius: 7,
-                color: '#FFFFFF',
-                weight: 2,
-                fillColor: h.color,
-                fillOpacity: 1
-            }).addTo(map).bindPopup(`<strong style="color:#092F5B;">LetsTo Coverage</strong><br><span style="font-size:12px;">${h.name}</span>`);
-        });
-
-        document.querySelectorAll('.map-hub-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.map-hub-btn').forEach(b => {
-                    b.classList.remove('btn-navy', 'active');
-                    b.classList.add('btn-outline-secondary');
-                });
-                btn.classList.remove('btn-outline-secondary');
-                btn.classList.add('btn-navy', 'active');
-                map.flyTo([parseFloat(btn.dataset.lat), parseFloat(btn.dataset.lng)], parseInt(btn.dataset.zoom, 10), { duration: 0.8 });
-            });
-        });
-
-        setTimeout(() => map.invalidateSize(), 300);
-    }
-
-    initValleyMap();
-});
-</script>
 {% endblock %}

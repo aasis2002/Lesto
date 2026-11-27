@@ -55,6 +55,14 @@ class WhatsAppBookingForm(forms.Form):
         required=False,
         widget=forms.FileInput(attrs={'class': 'form-control'})
     )
+    location_link = forms.URLField(
+        required=False,
+        widget=forms.URLInput(attrs={
+            'class': 'form-control',
+            'id': 'id_location_link',
+            'placeholder': 'Paste Google Maps / shared location link (optional)'
+        })
+    )
     latitude = forms.DecimalField(
         required=False, max_digits=9, decimal_places=6,
         widget=forms.HiddenInput(attrs={'id': 'id_latitude'})
